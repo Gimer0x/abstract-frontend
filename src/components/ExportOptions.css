@@ -1,0 +1,190 @@
+.export-options {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.export-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.export-header h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.export-header p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.export-buttons {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.export-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  min-height: 80px;
+}
+
+.export-button:hover:not(.disabled) {
+  border-color: var(--button-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.export-button:active:not(.disabled) {
+  transform: translateY(0);
+}
+
+.export-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.export-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.export-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.export-label {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.export-description {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.export-spinner {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--button-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+.export-status {
+  background: #f8f9fa;
+  padding: 1rem 2rem;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
+}
+
+.export-status p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .export-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .export-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .export-buttons {
+    padding: 1.5rem 1rem;
+    grid-template-columns: 1fr;
+  }
+  
+  .export-button {
+    padding: 1rem;
+    min-height: 70px;
+  }
+  
+  .export-icon {
+    font-size: 1.5rem;
+  }
+  
+  .export-label {
+    font-size: 1rem;
+  }
+  
+  .export-description {
+    font-size: 0.8rem;
+  }
+  
+  .export-status {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Animation for buttons */
+.export-button {
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: both;
+}
+
+.export-button:nth-child(1) { animation-delay: 0.1s; }
+.export-button:nth-child(2) { animation-delay: 0.2s; }
+.export-button:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for different export types */
+.export-button:hover:not(.disabled) .export-icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.export-button:hover:not(.disabled) .export-label {
+  color: var(--button-color);
+  transition: color 0.2s ease;
+} 
