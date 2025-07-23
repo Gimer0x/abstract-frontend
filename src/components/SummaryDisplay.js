@@ -4,6 +4,28 @@ import './SummaryDisplay.css';
 const SummaryDisplay = ({ summaryData, originalFilename, summarySize }) => {
   const [copied, setCopied] = useState(false);
 
+  // Safety check: ensure summaryData is an object with the expected structure
+  if (!summaryData || typeof summaryData !== 'object') {
+    return (
+      <div className="summary-display">
+        <div className="summary-header">
+          <h2>Document Summary</h2>
+          <p>Error: Invalid summary data received</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure we have the expected properties
+  const {
+    executiveSummary = '',
+    keyPoints = [],
+    actionItems = [],
+    importantDates = [],
+    relevantNames = [],
+    places = []
+  } = summaryData;
+
   const copyToClipboard = async () => {
     try {
       const textToCopy = formatSummaryForCopy(summaryData, originalFilename);
@@ -85,23 +107,23 @@ const SummaryDisplay = ({ summaryData, originalFilename, summarySize }) => {
       </div>
 
       <div className="summary-content">
-        {summaryData.executiveSummary && (
+        {executiveSummary && (
           <div className="summary-section executive-summary">
             <h3 className="section-title">
               <span className="section-icon">📝</span>
               Executive Summary
             </h3>
             <div className="summary-text">
-              {summaryData.executiveSummary}
+              {executiveSummary}
             </div>
           </div>
         )}
 
-        {renderSection('Key Points', summaryData.keyPoints, '🎯')}
-        {renderSection('Action Items', summaryData.actionItems, '✅')}
-        {renderSection('Important Dates', summaryData.importantDates, '📅')}
-        {renderSection('Relevant Names', summaryData.relevantNames, '👥')}
-        {renderSection('Places', summaryData.places, '📍')}
+        {renderSection('Key Points', keyPoints, '🎯')}
+        {renderSection('Action Items', actionItems, '✅')}
+        {renderSection('Important Dates', importantDates, '📅')}
+        {renderSection('Relevant Names', relevantNames, '👥')}
+        {renderSection('Places', places, '📍')}
       </div>
 
       <div className="summary-footer">

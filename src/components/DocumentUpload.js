@@ -70,7 +70,7 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
     } finally {
       setIsProcessing(false);
     }
-  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL]);
+  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize]);
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,

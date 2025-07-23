@@ -1,23 +1,46 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import DocumentUpload from './components/DocumentUpload';
 import SummaryDisplay from './components/SummaryDisplay';
 import ExportOptions from './components/ExportOptions';
 import SummarySizeSelector from './components/SummarySizeSelector';
+import LoginButton from './components/LoginButton';
+import UserProfile from './components/UserProfile';
+import DocumentHistory from './components/DocumentHistory';
 
-function App() {
+function AppContent() {
+  const { user, loading, login } = useAuth();
   const [summaryData, setSummaryData] = useState(null);
   const [originalFilename, setOriginalFilename] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [summarySize, setSummarySize] = useState('short');
+  const [showLogin, setShowLogin] = useState(false);
+
+  // Check for auth callback on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (token) {
+      login(token);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [login]);
 
   const handleDocumentProcessed = useCallback((data) => {
     setSummaryData(data.summary);
     setOriginalFilename(data.originalFilename);
-    toast.success('Document processed successfully!');
+    
+    if (data.requiresAuth) {
+      toast.warning('Sign in to access medium and long summaries!');
+    } else {
+      toast.success('Document processed successfully!');
+    }
   }, []);
 
   const handleProcessingError = useCallback((error) => {
@@ -39,47 +62,99 @@ function App() {
     toast.error(error.message || 'Error exporting document');
   }, []);
 
+  const handleGuestLogin = () => {
+    setShowLogin(false);
+    toast.info('Continuing as guest. You can only generate short summaries.');
+  };
+
+  if (loading) {
+    return (
+      <div className="App">
+        <div className="loading-screen">
+          <div className="loading-spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showLogin && !user) {
+    return (
+      <div className="App">
+        <LoginButton onLogin={handleGuestLogin} />
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Document Summarizer</h1>
-        <p>Upload a document to get an AI-powered summary and key insights</p>
+        <div className="header-content">
+          <div className="header-left">
+            <h1>Document Summarizer</h1>
+            <p>Upload a document to get an AI-powered summary and key insights</p>
+          </div>
+          <div className="header-right">
+            {user ? (
+              <UserProfile />
+            ) : (
+              <button 
+                className="sign-in-btn"
+                onClick={() => setShowLogin(true)}
+              >
+                Sign In
+              </button>
+            )}
+          </div>
+        </div>
       </header>
 
       <main className="App-main">
-        <SummarySizeSelector
-          selectedSize={summarySize}
-          onSizeChange={setSummarySize}
-          isProcessing={isProcessing}
-        />
-        
-        <DocumentUpload
-          onDocumentProcessed={handleDocumentProcessed}
-          onProcessingError={handleProcessingError}
-          isProcessing={isProcessing}
-          setIsProcessing={setIsProcessing}
-          summarySize={summarySize}
-        />
-
-        {summaryData && (
-          <>
-            <SummaryDisplay 
-              summaryData={summaryData} 
-              originalFilename={originalFilename}
-              summarySize={summarySize}
+        <div className="main-content">
+          <div className="upload-section">
+            <SummarySizeSelector
+              selectedSize={summarySize}
+              onSizeChange={setSummarySize}
+              isProcessing={isProcessing}
+              isAuthenticated={!!user}
             />
             
-            <ExportOptions
-              summaryData={summaryData}
-              originalFilename={originalFilename}
+            <DocumentUpload
+              onDocumentProcessed={handleDocumentProcessed}
+              onProcessingError={handleProcessingError}
+              isProcessing={isProcessing}
+              setIsProcessing={setIsProcessing}
               summarySize={summarySize}
-              onExportStart={handleExportStart}
-              onExportComplete={handleExportComplete}
-              onExportError={handleExportError}
-              isExporting={isExporting}
+              isAuthenticated={!!user}
             />
-          </>
-        )}
+
+            {summaryData && (
+              <>
+                <SummaryDisplay 
+                  summaryData={summaryData} 
+                  originalFilename={originalFilename}
+                  summarySize={summarySize}
+                />
+                
+                <ExportOptions
+                  summaryData={summaryData}
+                  originalFilename={originalFilename}
+                  summarySize={summarySize}
+                  onExportStart={handleExportStart}
+                  onExportComplete={handleExportComplete}
+                  onExportError={handleExportError}
+                  isExporting={isExporting}
+                />
+              </>
+            )}
+          </div>
+
+          {user && (
+            <div className="history-section">
+              <DocumentHistory />
+            </div>
+          )}
+        </div>
       </main>
 
       <ToastContainer
@@ -94,6 +169,14 @@ function App() {
         pauseOnHover
       />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
