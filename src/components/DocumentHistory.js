@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import './DocumentHistory.css';
 
@@ -8,6 +9,7 @@ const DocumentHistory = () => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [downloading, setDownloading] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -58,6 +60,81 @@ const DocumentHistory = () => {
     return labels[size] || size;
   };
 
+  const handleDownload = async (doc, format) => {
+    if (!user) return;
+
+    const docId = doc._id;
+    setDownloading(prev => ({ ...prev, [docId]: true }));
+
+    try {
+      console.log('Downloading document:', { 
+        docId, 
+        format, 
+        filename: doc.originalFilename,
+        hasSummary: !!doc.summary 
+      });
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/export/${format}`,
+        {
+          summaryData: doc.summary,
+          originalFilename: doc.originalFilename,
+          summarySize: doc.summarySize
+        },
+        {
+          responseType: 'blob'
+        }
+      );
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `summary-${doc.originalFilename.replace(/\.[^/.]+$/, '')}.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`${format.toUpperCase()} download started!`);
+    } catch (error) {
+      console.error('Download error:', error);
+      
+      let errorMessage = 'Failed to download document';
+      
+      if (error.response) {
+        // Server responded with error
+        if (error.response.data instanceof Blob) {
+          // Try to read the blob as text to get error details
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const errorData = JSON.parse(reader.result);
+              toast.error(errorData.error || errorMessage);
+            } catch {
+              toast.error(errorMessage);
+            }
+          };
+          reader.readAsText(error.response.data);
+        } else {
+          errorMessage = error.response.data.error || errorMessage;
+          if (error.response.data.details) {
+            errorMessage += `: ${error.response.data.details}`;
+          }
+          toast.error(errorMessage);
+        }
+      } else if (error.request) {
+        // Network error
+        toast.error('Network error. Please check your connection.');
+      } else {
+        // Other error
+        toast.error(error.message || errorMessage);
+      }
+    } finally {
+      setDownloading(prev => ({ ...prev, [docId]: false }));
+    }
+  };
+
   if (!user) return null;
 
   if (loading) {
@@ -101,11 +178,33 @@ const DocumentHistory = () => {
                   <span className="document-date">{formatDate(doc.createdAt)}</span>
                 </div>
               </div>
-              <div className="document-summary">
-                {doc.summary.executiveSummary && doc.summary.executiveSummary.length > 100 
-                  ? `${doc.summary.executiveSummary.substring(0, 100)}...` 
-                  : doc.summary.executiveSummary || 'Summary not available'
-                }
+              <div className="document-actions">
+                <div className="download-options">
+                  <button
+                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                    onClick={() => handleDownload(doc, 'pdf')}
+                    disabled={downloading[doc._id]}
+                    title="Download as PDF"
+                  >
+                    {downloading[doc._id] ? '⏳' : '📄'} PDF
+                  </button>
+                  <button
+                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                    onClick={() => handleDownload(doc, 'docx')}
+                    disabled={downloading[doc._id]}
+                    title="Download as Word"
+                  >
+                    {downloading[doc._id] ? '⏳' : '📘'} Word
+                  </button>
+                  <button
+                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                    onClick={() => handleDownload(doc, 'txt')}
+                    disabled={downloading[doc._id]}
+                    title="Download as Text"
+                  >
+                    {downloading[doc._id] ? '⏳' : '📝'} TXT
+                  </button>
+                </div>
               </div>
             </div>
           ))}
