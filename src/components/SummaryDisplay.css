@@ -29,6 +29,18 @@
   gap: 1rem;
 }
 
+.meta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.summary-size {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
 .filename {
   font-size: 0.9rem;
   opacity: 0.9;

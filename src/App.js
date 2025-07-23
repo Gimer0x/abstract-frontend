@@ -5,12 +5,14 @@ import './App.css';
 import DocumentUpload from './components/DocumentUpload';
 import SummaryDisplay from './components/SummaryDisplay';
 import ExportOptions from './components/ExportOptions';
+import SummarySizeSelector from './components/SummarySizeSelector';
 
 function App() {
   const [summaryData, setSummaryData] = useState(null);
   const [originalFilename, setOriginalFilename] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [summarySize, setSummarySize] = useState('short');
 
   const handleDocumentProcessed = useCallback((data) => {
     setSummaryData(data.summary);
@@ -45,11 +47,18 @@ function App() {
       </header>
 
       <main className="App-main">
+        <SummarySizeSelector
+          selectedSize={summarySize}
+          onSizeChange={setSummarySize}
+          isProcessing={isProcessing}
+        />
+        
         <DocumentUpload
           onDocumentProcessed={handleDocumentProcessed}
           onProcessingError={handleProcessingError}
           isProcessing={isProcessing}
           setIsProcessing={setIsProcessing}
+          summarySize={summarySize}
         />
 
         {summaryData && (
@@ -57,11 +66,13 @@ function App() {
             <SummaryDisplay 
               summaryData={summaryData} 
               originalFilename={originalFilename}
+              summarySize={summarySize}
             />
             
             <ExportOptions
               summaryData={summaryData}
               originalFilename={originalFilename}
+              summarySize={summarySize}
               onExportStart={handleExportStart}
               onExportComplete={handleExportComplete}
               onExportError={handleExportError}

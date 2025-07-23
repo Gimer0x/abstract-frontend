@@ -5,6 +5,7 @@ import './ExportOptions.css';
 const ExportOptions = ({ 
   summaryData, 
   originalFilename, 
+  summarySize,
   onExportStart, 
   onExportComplete, 
   onExportError, 
@@ -20,7 +21,8 @@ const ExportOptions = ({
         `${API_BASE_URL}/api/export/${format}`,
         {
           summaryData,
-          originalFilename
+          originalFilename,
+          summarySize
         },
         {
           responseType: format === 'txt' ? 'text' : 'blob',

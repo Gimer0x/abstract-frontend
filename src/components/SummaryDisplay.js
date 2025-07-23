@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SummaryDisplay.css';
 
-const SummaryDisplay = ({ summaryData, originalFilename }) => {
+const SummaryDisplay = ({ summaryData, originalFilename, summarySize }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -70,7 +70,10 @@ const SummaryDisplay = ({ summaryData, originalFilename }) => {
       <div className="summary-header">
         <h2>Document Summary</h2>
         <div className="summary-meta">
-          <span className="filename">Original: {originalFilename}</span>
+          <div className="meta-info">
+            <span className="filename">Original: {originalFilename}</span>
+            <span className="summary-size">Size: {summarySize.charAt(0).toUpperCase() + summarySize.slice(1)}</span>
+          </div>
           <button 
             className={`copy-button ${copied ? 'copied' : ''}`}
             onClick={copyToClipboard}

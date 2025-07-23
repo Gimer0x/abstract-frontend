@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import './DocumentUpload.css';
 
-const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing }) => {
+const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing, summarySize }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
   const onDrop = useCallback(async (acceptedFiles) => {
@@ -33,6 +33,7 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
     try {
       const formData = new FormData();
       formData.append('document', file);
+      formData.append('summarySize', summarySize);
 
       const response = await axios.post(`${API_BASE_URL}/api/process-document`, formData, {
         headers: {
