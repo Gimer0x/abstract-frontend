@@ -113,7 +113,7 @@ function AppContent() {
               </button>
             </nav>
             {user ? (
-              <UserProfile />
+              <UserProfile onNavigateToPricing={() => setCurrentPage('pricing')} />
             ) : (
               <button 
                 className="sign-in-btn"
@@ -135,6 +135,7 @@ function AppContent() {
                 onSizeChange={setSummarySize}
                 isProcessing={isProcessing}
                 isAuthenticated={!!user}
+                onNavigateToPricing={() => setCurrentPage('pricing')}
               />
               
               <DocumentUpload
@@ -144,6 +145,7 @@ function AppContent() {
                 setIsProcessing={setIsProcessing}
                 summarySize={summarySize}
                 isAuthenticated={!!user}
+                onNavigateToPricing={() => setCurrentPage('pricing')}
               />
 
               {summaryData && (

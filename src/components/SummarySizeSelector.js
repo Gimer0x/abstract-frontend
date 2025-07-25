@@ -3,7 +3,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import UpgradePrompt from './UpgradePrompt';
 import './SummarySizeSelector.css';
 
-const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthenticated }) => {
+const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthenticated, onNavigateToPricing }) => {
 
   const { canAccessFeature } = useSubscription();
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
@@ -118,8 +118,9 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
         onClose={() => setShowUpgradePrompt(false)}
         onUpgrade={() => {
           setShowUpgradePrompt(false);
-          // Navigate to pricing page
-          window.location.href = '/pricing';
+          if (onNavigateToPricing) {
+            onNavigateToPricing();
+          }
         }}
       />
     </div>

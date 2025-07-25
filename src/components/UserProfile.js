@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import './UserProfile.css';
 
-const UserProfile = () => {
+const UserProfile = ({ onNavigateToPricing }) => {
   const { user, logout } = useAuth();
   const { subscription, usage, getRemainingDocuments } = useSubscription();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -59,7 +59,10 @@ const UserProfile = () => {
           )}
           
           <div className="dropdown-divider"></div>
-          <button className="dropdown-item" onClick={() => window.location.href = '/pricing'}>
+          <button className="dropdown-item" onClick={() => {
+            onNavigateToPricing();
+            setShowDropdown(false);
+          }}>
             <span className="upgrade-icon">💎</span>
             Manage Subscription
           </button>

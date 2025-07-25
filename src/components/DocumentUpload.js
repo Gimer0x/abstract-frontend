@@ -6,7 +6,7 @@ import { useSubscription } from '../context/SubscriptionContext';
 import UpgradePrompt from './UpgradePrompt';
 import './DocumentUpload.css';
 
-const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing, summarySize }) => {
+const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing, summarySize, onNavigateToPricing }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
   const { user, isAuthenticated } = useAuth();
   const { canUploadMore } = useSubscription();
@@ -155,8 +155,9 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
         onClose={() => setShowUpgradePrompt(false)}
         onUpgrade={() => {
           setShowUpgradePrompt(false);
-          // Navigate to pricing page
-          window.location.href = '/pricing';
+          if (onNavigateToPricing) {
+            onNavigateToPricing();
+          }
         }}
       />
     </div>

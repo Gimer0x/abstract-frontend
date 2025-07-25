@@ -7,6 +7,7 @@ const UpgradePrompt = ({
   feature = null, 
   onClose, 
   onUpgrade,
+  onNavigateToPricing,
   show = false 
 }) => {
   const { subscription, getRemainingDocuments } = useSubscription();
@@ -76,8 +77,10 @@ const UpgradePrompt = ({
   const handleUpgrade = () => {
     if (onUpgrade) {
       onUpgrade();
+    } else if (onNavigateToPricing) {
+      onNavigateToPricing();
     } else {
-      // Default behavior - redirect to pricing
+      // Fallback behavior - redirect to pricing
       window.location.href = '/pricing';
     }
   };
