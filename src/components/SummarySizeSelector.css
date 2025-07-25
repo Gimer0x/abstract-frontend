@@ -36,6 +36,23 @@
   font-size: 16px;
 }
 
+.premium-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  border: 1px solid #bbdefb;
+  margin-top: 0.5rem;
+}
+
+.premium-icon {
+  font-size: 16px;
+}
+
 .size-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -79,6 +96,14 @@
   border-color: #dee2e6;
 }
 
+.size-option.premium-locked {
+  opacity: 0.8;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #6f42c1;
+  border-style: dashed;
+}
+
 .option-icon {
   position: relative;
   font-size: 2rem;
@@ -100,8 +125,23 @@
   background: #dc3545;
   color: white;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.premium-lock-icon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 12px;
+  background: #6f42c1;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,6 +164,17 @@
 
 .auth-badge {
   background: #dc3545;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.premium-badge {
+  background: #6f42c1;
   color: white;
   font-size: 10px;
   padding: 2px 6px;

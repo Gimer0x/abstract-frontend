@@ -1,15 +1,31 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { useSubscription } from '../context/SubscriptionContext';
+import UpgradePrompt from './UpgradePrompt';
 import './DocumentUpload.css';
 
 const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing, summarySize }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const { user, isAuthenticated } = useAuth();
+  const { canUploadMore } = useSubscription();
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
 
     const file = acceptedFiles[0];
+    
+    // Debug logging
+
+    
+    // Check if user can upload more documents (only for authenticated users)
+    if (isAuthenticated && !canUploadMore()) {
+      console.log('DocumentUpload - User has exceeded limit, showing upgrade prompt');
+      setShowUpgradePrompt(true);
+      return;
+    }
     
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
@@ -35,12 +51,22 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
       formData.append('document', file);
       formData.append('summarySize', summarySize);
 
-      const response = await axios.post(`${API_BASE_URL}/api/process-document`, formData, {
+      // Use different endpoints based on authentication status
+      const endpoint = isAuthenticated ? '/api/process-document' : '/api/process-document-guest';
+      
+      const config = {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
         timeout: 120000, // 2 minutes timeout
-      });
+      };
+
+      // Add authorization header for authenticated users
+      if (isAuthenticated) {
+        config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      }
+
+      const response = await axios.post(`${API_BASE_URL}${endpoint}`, formData, config);
 
       if (response.data.success) {
         onDocumentProcessed(response.data);
@@ -70,7 +96,7 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
     } finally {
       setIsProcessing(false);
     }
-  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize]);
+  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize, canUploadMore, isAuthenticated, user]);
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
@@ -122,6 +148,17 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
           </div>
         )}
       </div>
+      
+      <UpgradePrompt
+        type="limit"
+        show={showUpgradePrompt}
+        onClose={() => setShowUpgradePrompt(false)}
+        onUpgrade={() => {
+          setShowUpgradePrompt(false);
+          // Navigate to pricing page
+          window.location.href = '/pricing';
+        }}
+      />
     </div>
   );
 };

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useSubscription } from '../context/SubscriptionContext';
 import './UserProfile.css';
 
 const UserProfile = () => {
   const { user, logout } = useAuth();
+  const { subscription, usage, getRemainingDocuments } = useSubscription();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -39,7 +41,28 @@ const UserProfile = () => {
               <div className="user-email">{user.email}</div>
             </div>
           </div>
+          
+          {subscription && (
+            <div className="subscription-info">
+              <div className="plan-badge">
+                {subscription.plan === 'free' && '🆓 Free'}
+                {subscription.plan === 'premium' && '💎 Premium'}
+                {subscription.plan === 'pro' && '🚀 Pro'}
+              </div>
+              {usage && (
+                <div className="usage-info">
+                  <span>Documents: {usage.documentCount}</span>
+                  <span>Remaining: {getRemainingDocuments()}</span>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="dropdown-divider"></div>
+          <button className="dropdown-item" onClick={() => window.location.href = '/pricing'}>
+            <span className="upgrade-icon">💎</span>
+            Manage Subscription
+          </button>
           <button className="dropdown-item" onClick={handleLogout}>
             <span className="logout-icon">🚪</span>
             Sign Out

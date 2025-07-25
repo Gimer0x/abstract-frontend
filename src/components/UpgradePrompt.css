@@ -1,0 +1,214 @@
+.upgrade-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.upgrade-prompt-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.upgrade-prompt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.upgrade-prompt-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.upgrade-prompt-content {
+  padding: 1.5rem;
+}
+
+.upgrade-icon {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.upgrade-icon span {
+  font-size: 3rem;
+  display: block;
+}
+
+.upgrade-message {
+  font-size: 1.1rem;
+  color: #374151;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.usage-info {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.usage-info p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.usage-info p:first-child {
+  font-weight: 600;
+  color: #374151;
+}
+
+.upgrade-features {
+  margin-bottom: 1.5rem;
+}
+
+.upgrade-features h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.upgrade-features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.upgrade-features li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.upgrade-features .checkmark {
+  color: #10b981;
+  font-weight: bold;
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.upgrade-prompt-actions {
+  padding: 0 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upgrade-btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upgrade-btn.primary {
+  background: #6366f1;
+  color: white;
+}
+
+.upgrade-btn.primary:hover {
+  background: #5855eb;
+  transform: translateY(-1px);
+}
+
+.upgrade-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.upgrade-btn.secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .upgrade-prompt-overlay {
+    padding: 0.5rem;
+  }
+  
+  .upgrade-prompt-modal {
+    max-height: 95vh;
+  }
+  
+  .upgrade-prompt-header {
+    padding: 1rem 1rem 0;
+  }
+  
+  .upgrade-prompt-header h2 {
+    font-size: 1.25rem;
+  }
+  
+  .upgrade-prompt-content {
+    padding: 1rem;
+  }
+  
+  .upgrade-icon span {
+    font-size: 2.5rem;
+  }
+  
+  .upgrade-message {
+    font-size: 1rem;
+  }
+  
+  .upgrade-prompt-actions {
+    padding: 0 1rem 1rem;
+  }
+} 

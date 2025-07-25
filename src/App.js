@@ -3,6 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
 import DocumentUpload from './components/DocumentUpload';
 import SummaryDisplay from './components/SummaryDisplay';
 import ExportOptions from './components/ExportOptions';
@@ -10,6 +11,7 @@ import SummarySizeSelector from './components/SummarySizeSelector';
 import LoginButton from './components/LoginButton';
 import UserProfile from './components/UserProfile';
 import DocumentHistory from './components/DocumentHistory';
+import Pricing from './components/Pricing';
 
 function AppContent() {
   const { user, loading, login } = useAuth();
@@ -19,6 +21,7 @@ function AppContent() {
   const [isExporting, setIsExporting] = useState(false);
   const [summarySize, setSummarySize] = useState('short');
   const [showLogin, setShowLogin] = useState(false);
+  const [currentPage, setCurrentPage] = useState('main');
 
   // Check for auth callback on mount
   useEffect(() => {
@@ -95,6 +98,20 @@ function AppContent() {
             <p>Upload a document to get an AI-powered summary and key insights</p>
           </div>
           <div className="header-right">
+            <nav className="header-nav">
+              <button 
+                className={`nav-btn ${currentPage === 'main' ? 'active' : ''}`}
+                onClick={() => setCurrentPage('main')}
+              >
+                Home
+              </button>
+              <button 
+                className={`nav-btn ${currentPage === 'pricing' ? 'active' : ''}`}
+                onClick={() => setCurrentPage('pricing')}
+              >
+                Pricing
+              </button>
+            </nav>
             {user ? (
               <UserProfile />
             ) : (
@@ -110,51 +127,55 @@ function AppContent() {
       </header>
 
       <main className="App-main">
-        <div className="main-content">
-          <div className="upload-section">
-            <SummarySizeSelector
-              selectedSize={summarySize}
-              onSizeChange={setSummarySize}
-              isProcessing={isProcessing}
-              isAuthenticated={!!user}
-            />
-            
-            <DocumentUpload
-              onDocumentProcessed={handleDocumentProcessed}
-              onProcessingError={handleProcessingError}
-              isProcessing={isProcessing}
-              setIsProcessing={setIsProcessing}
-              summarySize={summarySize}
-              isAuthenticated={!!user}
-            />
+        {currentPage === 'main' ? (
+          <div className="main-content">
+            <div className="upload-section">
+              <SummarySizeSelector
+                selectedSize={summarySize}
+                onSizeChange={setSummarySize}
+                isProcessing={isProcessing}
+                isAuthenticated={!!user}
+              />
+              
+              <DocumentUpload
+                onDocumentProcessed={handleDocumentProcessed}
+                onProcessingError={handleProcessingError}
+                isProcessing={isProcessing}
+                setIsProcessing={setIsProcessing}
+                summarySize={summarySize}
+                isAuthenticated={!!user}
+              />
 
-            {summaryData && (
-              <>
-                <SummaryDisplay 
-                  summaryData={summaryData} 
-                  originalFilename={originalFilename}
-                  summarySize={summarySize}
-                />
-                
-                <ExportOptions
-                  summaryData={summaryData}
-                  originalFilename={originalFilename}
-                  summarySize={summarySize}
-                  onExportStart={handleExportStart}
-                  onExportComplete={handleExportComplete}
-                  onExportError={handleExportError}
-                  isExporting={isExporting}
-                />
-              </>
+              {summaryData && (
+                <>
+                  <SummaryDisplay 
+                    summaryData={summaryData} 
+                    originalFilename={originalFilename}
+                    summarySize={summarySize}
+                  />
+                  
+                  <ExportOptions
+                    summaryData={summaryData}
+                    originalFilename={originalFilename}
+                    summarySize={summarySize}
+                    onExportStart={handleExportStart}
+                    onExportComplete={handleExportComplete}
+                    onExportError={handleExportError}
+                    isExporting={isExporting}
+                  />
+                </>
+              )}
+            </div>
+
+            {user && (
+              <div className="history-section">
+                <DocumentHistory />
+              </div>
             )}
           </div>
-
-          {user && (
-            <div className="history-section">
-              <DocumentHistory />
-            </div>
-          )}
-        </div>
+        ) : (
+          <Pricing />
+        )}
       </main>
 
       <ToastContainer
@@ -175,7 +196,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <SubscriptionProvider>
+        <AppContent />
+      </SubscriptionProvider>
     </AuthProvider>
   );
 }

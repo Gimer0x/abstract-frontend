@@ -20,7 +20,13 @@ const DocumentHistory = () => {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents`);
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
       setDocuments(response.data);
     } catch (error) {
       console.error('Error fetching documents:', error);
@@ -74,6 +80,7 @@ const DocumentHistory = () => {
         hasSummary: !!doc.summary 
       });
 
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/export/${format}`,
         {
@@ -82,6 +89,10 @@ const DocumentHistory = () => {
           summarySize: doc.summarySize
         },
         {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
           responseType: 'blob'
         }
       );
