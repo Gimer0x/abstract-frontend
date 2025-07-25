@@ -158,18 +158,19 @@ export const SubscriptionProvider = ({ children }) => {
     }
     
     const plan = subscription.plan;
-    const currentUsage = usage.documentsThisMonth || usage.documentCount || 0;
+    const currentDocuments = usage.documentsThisMonth || usage.documentCount || 0;
+    const currentPages = usage.pagesThisMonth || usage.pageCount || 0;
+    const limits = usage.limits || { documents: 5, pages: 100 };
     
-    switch (plan) {
-      case 'free':
-        return currentUsage < 5;
-      case 'premium':
-        return currentUsage < 50;
-      case 'pro':
-        return true; // Unlimited
-      default:
-        return false;
+    // Check both document and page limits
+    if (plan === 'pro') {
+      return true; // Unlimited
     }
+    
+    const documentLimit = limits.documents === Infinity ? Infinity : limits.documents;
+    const pageLimit = limits.pages === Infinity ? Infinity : limits.pages;
+    
+    return currentDocuments < documentLimit && currentPages < pageLimit;
   };
 
   // Get remaining documents for current month
@@ -177,18 +178,31 @@ export const SubscriptionProvider = ({ children }) => {
     if (!subscription || !usage) return 0;
     
     const plan = subscription.plan;
-    const currentUsage = usage.documentsThisMonth || usage.documentCount || 0;
+    const currentDocuments = usage.documentsThisMonth || usage.documentCount || 0;
+    const limits = usage.limits || { documents: 5, pages: 100 };
     
-    switch (plan) {
-      case 'free':
-        return Math.max(0, 5 - currentUsage);
-      case 'premium':
-        return Math.max(0, 50 - currentUsage);
-      case 'pro':
-        return 'Unlimited';
-      default:
-        return 0;
+    if (plan === 'pro') {
+      return 'Unlimited';
     }
+    
+    const documentLimit = limits.documents === Infinity ? Infinity : limits.documents;
+    return Math.max(0, documentLimit - currentDocuments);
+  };
+
+  // Get remaining pages for current month
+  const getRemainingPages = () => {
+    if (!subscription || !usage) return 0;
+    
+    const plan = subscription.plan;
+    const currentPages = usage.pagesThisMonth || usage.pageCount || 0;
+    const limits = usage.limits || { documents: 5, pages: 100 };
+    
+    if (plan === 'pro') {
+      return 'Unlimited';
+    }
+    
+    const pageLimit = limits.pages === Infinity ? Infinity : limits.pages;
+    return Math.max(0, pageLimit - currentPages);
   };
 
   // Refresh subscription data
@@ -212,6 +226,7 @@ export const SubscriptionProvider = ({ children }) => {
     canAccessFeature,
     canUploadMore,
     getRemainingDocuments,
+    getRemainingPages,
     refreshData
   };
 

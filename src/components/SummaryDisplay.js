@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SummaryDisplay.css';
 
-const SummaryDisplay = ({ summaryData, originalFilename, summarySize }) => {
+const SummaryDisplay = ({ summaryData, originalFilename, summarySize, onStartOver = null }) => {
   const [copied, setCopied] = useState(false);
 
   // Safety check: ensure summaryData is an object with the expected structure
@@ -91,19 +91,30 @@ const SummaryDisplay = ({ summaryData, originalFilename, summarySize }) => {
     <div className="summary-display">
       <div className="summary-header">
         <h2>Document Summary</h2>
-        <div className="summary-meta">
-          <div className="meta-info">
-            <span className="filename">Original: {originalFilename}</span>
-            <span className="summary-size">Size: {summarySize.charAt(0).toUpperCase() + summarySize.slice(1)}</span>
+                  <div className="summary-meta">
+            <div className="meta-info">
+              <span className="filename">Original: {originalFilename}</span>
+              <span className="summary-size">Size: {summarySize.charAt(0).toUpperCase() + summarySize.slice(1)}</span>
+            </div>
+            <div className="summary-actions">
+              <button 
+                className={`copy-button ${copied ? 'copied' : ''}`}
+                onClick={copyToClipboard}
+                title="Copy summary to clipboard"
+              >
+                {copied ? '✓ Copied!' : '📋 Copy'}
+              </button>
+              {onStartOver && (
+                <button 
+                  className="start-over-button"
+                  onClick={onStartOver}
+                  title="Start over with a new document"
+                >
+                  ↺ Start over
+                </button>
+              )}
+            </div>
           </div>
-          <button 
-            className={`copy-button ${copied ? 'copied' : ''}`}
-            onClick={copyToClipboard}
-            title="Copy summary to clipboard"
-          >
-            {copied ? '✓ Copied!' : '📋 Copy'}
-          </button>
-        </div>
       </div>
 
       <div className="summary-content">

@@ -10,7 +10,7 @@ const UpgradePrompt = ({
   onNavigateToPricing,
   show = false 
 }) => {
-  const { subscription, getRemainingDocuments } = useSubscription();
+  const { subscription, getRemainingDocuments, getRemainingPages, usage } = useSubscription();
 
   if (!show) return null;
 
@@ -32,7 +32,11 @@ const UpgradePrompt = ({
     
     switch (type) {
       case 'limit':
-        return `You've reached your ${plan === 'free' ? '5' : '50'} document limit for this month. Upgrade to continue processing documents.`;
+        if (plan === 'free') {
+          return 'You\'ve reached your monthly limits. Free users can process up to 5 documents and 100 pages per month.';
+        } else {
+          return 'You\'ve reached your monthly document limit. Upgrade to continue processing documents.';
+        }
       case 'feature':
         return `This feature is only available for Premium and Pro users. Upgrade to unlock ${feature}.`;
       case 'upgrade':
@@ -106,8 +110,19 @@ const UpgradePrompt = ({
 
           {type === 'limit' && (
             <div className="usage-info">
-              <p>Current usage: {subscription?.plan === 'free' ? '5/5' : '50/50'} documents</p>
-              <p>Remaining: {getRemainingDocuments()} documents</p>
+              {subscription?.plan === 'free' ? (
+                <>
+                  <p>Documents: {usage?.documentsThisMonth || 0}/5</p>
+                  <p>Pages: {usage?.pagesThisMonth || 0}/100</p>
+                  <p>Remaining documents: {getRemainingDocuments()}</p>
+                  <p>Remaining pages: {getRemainingPages()}</p>
+                </>
+              ) : (
+                <>
+                  <p>Current usage: {usage?.documentsThisMonth || 0}/50 documents</p>
+                  <p>Remaining: {getRemainingDocuments()} documents</p>
+                </>
+              )}
             </div>
           )}
 

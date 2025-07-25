@@ -158,6 +158,16 @@
   .upload-section {
     padding: 20px;
   }
+  
+  .reset-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  
+  .reset-icon {
+    font-size: 12px;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -228,4 +238,39 @@ input:focus {
   .export-options {
     display: none;
   }
+}
+
+/* Reset Button - Professional & Minimalist */
+.reset-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  margin-left: 12px;
+}
+
+.reset-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.reset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reset-icon {
+  font-size: 14px;
+  font-weight: bold;
 }

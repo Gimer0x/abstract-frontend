@@ -23,6 +23,21 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [currentPage, setCurrentPage] = useState('main');
 
+  const handleStartOver = useCallback(() => {
+    setSummaryData(null);
+    setOriginalFilename('');
+    setIsProcessing(false);
+    setIsExporting(false);
+    setSummarySize('short');
+    toast.info('Ready to process another document!');
+    
+    // Force reload of document history if user is logged in
+    if (user) {
+      // Trigger a custom event to reload document history
+      window.dispatchEvent(new CustomEvent('reloadDocumentHistory'));
+    }
+  }, [user]);
+
   // Check for auth callback on mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -34,6 +49,23 @@ function AppContent() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [login]);
+
+  // Add keyboard shortcut for starting over
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check if user has processed a document and is on the main page
+      if (summaryData && currentPage === 'main') {
+        // Ctrl+R (Windows/Linux) or Cmd+R (Mac)
+        if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+          event.preventDefault(); // Prevent browser refresh
+          handleStartOver();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [summaryData, currentPage, handleStartOver]);
 
   const handleDocumentProcessed = useCallback((data) => {
     setSummaryData(data.summary);
@@ -122,6 +154,8 @@ function AppContent() {
                 Sign In
               </button>
             )}
+            
+
           </div>
         </div>
       </header>
@@ -154,6 +188,7 @@ function AppContent() {
                     summaryData={summaryData} 
                     originalFilename={originalFilename}
                     summarySize={summarySize}
+                    onStartOver={handleStartOver}
                   />
                   
                   <ExportOptions

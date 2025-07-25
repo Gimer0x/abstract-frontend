@@ -17,6 +17,20 @@ const DocumentHistory = () => {
     }
   }, [user]);
 
+  // Listen for reload event from start over button
+  useEffect(() => {
+    const handleReload = () => {
+      if (user) {
+        fetchDocuments();
+      }
+    };
+
+    window.addEventListener('reloadDocumentHistory', handleReload);
+    return () => {
+      window.removeEventListener('reloadDocumentHistory', handleReload);
+    };
+  }, [user]);
+
   const fetchDocuments = async () => {
     try {
       setLoading(true);

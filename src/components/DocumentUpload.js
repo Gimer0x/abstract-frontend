@@ -80,9 +80,17 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
       
       if (error.response) {
         // Server responded with error
-        errorMessage = error.response.data.error || errorMessage;
-        if (error.response.data.details) {
-          errorMessage += `: ${error.response.data.details}`;
+        const responseData = error.response.data;
+        errorMessage = responseData.error || errorMessage;
+        
+        // Handle limit exceeded errors
+        if (responseData.reason === 'document_limit' || responseData.reason === 'page_limit') {
+          setShowUpgradePrompt(true);
+          return; // Don't show error toast, show upgrade prompt instead
+        }
+        
+        if (responseData.details) {
+          errorMessage += `: ${responseData.details}`;
         }
       } else if (error.request) {
         // Network error
