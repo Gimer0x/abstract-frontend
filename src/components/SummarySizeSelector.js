@@ -80,7 +80,7 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
         {sizeOptions.map((option) => {
           const isDisabled = isProcessing || (option.requiresAuth && !isAuthenticated);
           const isLocked = option.requiresAuth && !isAuthenticated;
-          const isPremiumLocked = option.requiresPremium && !canAccessFeature('long_summary');
+          const isPremiumLocked = isAuthenticated && option.requiresPremium && !canAccessFeature('long_summary');
           
           return (
             <button
