@@ -9,7 +9,8 @@ const ExportOptions = ({
   onExportStart, 
   onExportComplete, 
   onExportError, 
-  isExporting 
+  isExporting,
+  isGuest = false // New prop to identify guest users
 }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
@@ -86,6 +87,40 @@ const ExportOptions = ({
       color: '#6c757d'
     }
   ];
+
+  // If user is a guest, show sign-in prompt instead of export buttons
+  if (isGuest) {
+    return (
+      <div className="export-options">
+        <div className="export-header">
+          <h3>Export Summary</h3>
+          <p>Sign in to download your summaries in multiple formats</p>
+        </div>
+
+        <div className="guest-export-message">
+          <div className="guest-icon">🔒</div>
+          <div className="guest-content">
+            <h4>Sign in to Export</h4>
+            <p>Guest users can copy the summary text, but need to sign in to download documents in PDF, Word, or Text formats.</p>
+            <div className="guest-benefits">
+              <div className="benefit-item">
+                <span className="benefit-icon">📄</span>
+                <span>Export to PDF, Word, and Text</span>
+              </div>
+              <div className="benefit-item">
+                <span className="benefit-icon">📚</span>
+                <span>Save document history</span>
+              </div>
+              <div className="benefit-item">
+                <span className="benefit-icon">📊</span>
+                <span>Access medium and long summaries</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="export-options">

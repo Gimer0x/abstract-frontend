@@ -143,6 +143,11 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
                 <p className="file-size">
                   Maximum file size: 5MB
                 </p>
+                {!isAuthenticated && (
+                  <p className="guest-limit">
+                    ⚠️ Guest users: Maximum 2 pages per document
+                  </p>
+                )}
               </div>
             )}
           </div>

@@ -164,6 +164,7 @@ function AppContent() {
                     onExportComplete={handleExportComplete}
                     onExportError={handleExportError}
                     isExporting={isExporting}
+                    isGuest={!user}
                   />
                 </>
               )}

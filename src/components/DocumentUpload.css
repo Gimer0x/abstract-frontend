@@ -102,6 +102,17 @@
   100% { transform: rotate(360deg); }
 }
 
+.guest-limit {
+  font-size: 0.85rem !important;
+  color: #ff6b35 !important;
+  font-weight: 500 !important;
+  background: rgba(255, 107, 53, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  margin-top: 0.5rem !important;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .dropzone {

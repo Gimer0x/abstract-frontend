@@ -188,3 +188,87 @@
   color: var(--button-color);
   transition: color 0.2s ease;
 } 
+
+/* Guest Export Message Styles */
+.guest-export-message {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  color: white;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.guest-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.guest-content h4 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.guest-content p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.9;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.guest-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.benefit-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .guest-export-message {
+    padding: 20px;
+    margin: 16px 0;
+  }
+  
+  .guest-content h4 {
+    font-size: 18px;
+  }
+  
+  .guest-content p {
+    font-size: 13px;
+  }
+  
+  .guest-benefits {
+    gap: 10px;
+  }
+  
+  .benefit-item {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+} 
