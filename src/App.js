@@ -8,7 +8,7 @@ import DocumentUpload from './components/DocumentUpload';
 import SummaryDisplay from './components/SummaryDisplay';
 import ExportOptions from './components/ExportOptions';
 import SummarySizeSelector from './components/SummarySizeSelector';
-import LoginButton from './components/LoginButton';
+import AuthForm from './components/AuthForm';
 import UserProfile from './components/UserProfile';
 import DocumentHistory from './components/DocumentHistory';
 import Pricing from './components/Pricing';
@@ -116,7 +116,7 @@ function AppContent() {
   if (showLogin && !user) {
     return (
       <div className="App">
-        <LoginButton onLogin={handleGuestLogin} />
+        <AuthForm onLogin={login} onClose={() => setShowLogin(false)} />
       </div>
     );
   }

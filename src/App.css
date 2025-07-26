@@ -1,15 +1,15 @@
 .App {
   text-align: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
 }
 
 .App-header {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
   padding: 20px 0;
-  color: white;
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  color: #1a1a1a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .header-content {
@@ -29,12 +29,13 @@
   margin: 0 0 8px 0;
   font-size: 28px;
   font-weight: 700;
+  color: #1a1a1a;
 }
 
 .header-left p {
   margin: 0;
   font-size: 16px;
-  opacity: 0.9;
+  color: #6b7280;
 }
 
 .header-right {
@@ -49,9 +50,9 @@
 }
 
 .nav-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -61,20 +62,20 @@
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: #f9fafb;
+  color: #374151;
 }
 
 .nav-btn.active {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: #f3f4f6;
+  color: #1a1a1a;
   font-weight: 600;
 }
 
 .sign-in-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: #3b82f6;
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid #3b82f6;
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
@@ -84,8 +85,10 @@
 }
 
 .sign-in-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: #2563eb;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .App-main {
@@ -117,14 +120,14 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  color: white;
+  color: #6b7280;
 }
 
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -219,7 +222,7 @@
 /* Focus styles for accessibility */
 button:focus,
 input:focus {
-  outline: 2px solid #667eea;
+  outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
@@ -231,7 +234,7 @@ input:focus {
   }
   
   .App-header {
-    color: black;
+    color: #1a1a1a;
   }
   
   .document-upload,
@@ -242,9 +245,9 @@ input:focus {
 
 /* Reset Button - Professional & Minimalist */
 .reset-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
@@ -254,13 +257,13 @@ input:focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  backdrop-filter: blur(10px);
   margin-left: 12px;
 }
 
 .reset-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
   transform: translateY(-1px);
 }
 
