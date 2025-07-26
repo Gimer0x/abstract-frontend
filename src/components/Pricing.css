@@ -74,6 +74,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  width: 120px;
+  text-align: center;
 }
 
 .current-badge {
@@ -89,6 +91,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  width: 120px;
+  text-align: center;
 }
 
 .best-option-badge {
@@ -104,6 +108,8 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  width: 120px;
+  text-align: center;
 }
 
 .plan-header {

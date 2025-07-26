@@ -16,7 +16,6 @@ const Pricing = () => {
       features: [
         '5 documents per month',
         'Short & Medium summaries',
-        'All export formats',
         'Watermarked exports',
         'Limited document history'
       ],
@@ -122,7 +121,7 @@ const Pricing = () => {
             className={`pricing-card ${plan.popular ? 'popular' : ''} ${plan.bestOption ? 'best-option' : ''} ${isCurrentPlan(plan.id) ? 'current-plan' : ''}`}
           >
             {plan.popular && <div className="popular-badge">Most Popular</div>}
-            {plan.bestOption && <div className="best-option-badge">Best Option</div>}
+            {plan.bestOption && <div className="best-option-badge">Best<br />Option</div>}
             {isCurrentPlan(plan.id) && <div className="current-badge">Current Plan</div>}
             
             <div className="plan-header">

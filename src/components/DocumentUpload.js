@@ -114,7 +114,7 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
     } finally {
       setIsProcessing(false);
     }
-  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize, canUploadMore, isAuthenticated, user]);
+  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize, canUploadMore, isAuthenticated]);
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
@@ -155,14 +155,14 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
                 <i className="upload-icon">📁</i>
                 <h3>Upload a Document</h3>
                 <p>Drag and drop a file here, or click to select</p>
-                <p className="summary-size-info">
-                  {getSummarySizeDescription(summarySize)}
-                </p>
                 <p className="file-types">
                   Supported formats: PDF, TXT, DOCX, RTF, ODT
                 </p>
                 <p className="file-size">
                   Maximum file size: 5MB
+                </p>
+                <p className="summary-size-info">
+                  {getSummarySizeDescription(summarySize)}
                 </p>
                 {!isAuthenticated && (
                   <p className="guest-limit">
