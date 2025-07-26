@@ -13,7 +13,6 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
       value: 'short',
       label: 'Short',
       description: '1 paragraph summary',
-      icon: '📝',
       color: '#28a745',
       requiresAuth: false,
       requiresPremium: false
@@ -22,7 +21,6 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
       value: 'medium',
       label: 'Medium',
       description: '3 paragraphs with detailed coverage',
-      icon: '📄',
       color: '#007bff',
       requiresAuth: true,
       requiresPremium: false
@@ -31,7 +29,6 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
       value: 'long',
       label: 'Large',
       description: '5 paragraphs comprehensive coverage',
-      icon: '📚',
       color: '#6f42c1',
       requiresAuth: true,
       requiresPremium: true
@@ -79,34 +76,19 @@ const SummarySizeSelector = ({ selectedSize, onSizeChange, isProcessing, isAuthe
       <div className="size-options">
         {sizeOptions.map((option) => {
           const isDisabled = isProcessing || (option.requiresAuth && !isAuthenticated);
-          const isLocked = option.requiresAuth && !isAuthenticated;
-          const isPremiumLocked = isAuthenticated && option.requiresPremium && !canAccessFeature('long_summary');
           
           return (
-            <button
+            <div
               key={option.value}
-              className={`size-option ${selectedSize === option.value ? 'selected' : ''} ${isDisabled ? 'disabled' : ''} ${isLocked ? 'locked' : ''} ${isPremiumLocked ? 'premium-locked' : ''}`}
-              onClick={() => handleSizeChange(option.value)}
-              disabled={isDisabled}
+              className={`text-option ${selectedSize === option.value ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+              onClick={() => !isDisabled && handleSizeChange(option.value)}
               style={{ '--option-color': option.color }}
             >
-              <div className="option-icon">
-                {option.icon}
-                {isLocked && <span className="lock-icon">🔒</span>}
-                {isPremiumLocked && <span className="premium-lock-icon">💎</span>}
-              </div>
               <div className="option-content">
-                <span className="option-label">
-                  {option.label}
-                  {isLocked && <span className="auth-badge">Sign in required</span>}
-                  {isPremiumLocked && <span className="premium-badge">Premium required</span>}
-                </span>
-                <span className="option-description">{option.description}</span>
+                <span className="option-label">{option.label}</span>
               </div>
-              {selectedSize === option.value && !isLocked && !isPremiumLocked && (
-                <div className="selected-indicator">✓</div>
-              )}
-            </button>
+
+            </div>
           );
         })}
       </div>

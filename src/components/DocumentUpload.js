@@ -12,6 +12,16 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
   const { canUploadMore } = useSubscription();
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
+  // Function to get summary size description
+  const getSummarySizeDescription = (size) => {
+    const descriptions = {
+      'short': '1 paragraph with key points',
+      'medium': '3 paragraphs with detailed coverage',
+      'long': '5+ paragraphs with comprehensive analysis'
+    };
+    return descriptions[size] || '3 paragraphs with detailed coverage';
+  };
+
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length === 0) return;
 
@@ -145,6 +155,9 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
                 <i className="upload-icon">📁</i>
                 <h3>Upload a Document</h3>
                 <p>Drag and drop a file here, or click to select</p>
+                <p className="summary-size-info">
+                  {getSummarySizeDescription(summarySize)}
+                </p>
                 <p className="file-types">
                   Supported formats: PDF, TXT, DOCX, RTF, ODT
                 </p>
