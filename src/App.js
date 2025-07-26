@@ -12,6 +12,7 @@ import AuthForm from './components/AuthForm';
 import UserProfile from './components/UserProfile';
 import DocumentHistory from './components/DocumentHistory';
 import Pricing from './components/Pricing';
+import ResetPassword from './components/ResetPassword';
 
 function AppContent() {
   const { user, loading, login } = useAuth();
@@ -97,10 +98,7 @@ function AppContent() {
     toast.error(error.message || 'Error exporting document');
   }, []);
 
-  const handleGuestLogin = () => {
-    setShowLogin(false);
-    toast.info('Continuing as guest. You can only generate short summaries.');
-  };
+
 
   if (loading) {
     return (
@@ -147,12 +145,20 @@ function AppContent() {
             {user ? (
               <UserProfile onNavigateToPricing={() => setCurrentPage('pricing')} />
             ) : (
-              <button 
-                className="sign-in-btn"
-                onClick={() => setShowLogin(true)}
-              >
-                Sign In
-              </button>
+              <div className="auth-buttons">
+                <button 
+                  className="sign-up-btn"
+                  onClick={() => setShowLogin(true)}
+                >
+                  Sign Up
+                </button>
+                <button 
+                  className="sign-in-btn"
+                  onClick={() => setShowLogin(true)}
+                >
+                  Sign In
+                </button>
+              </div>
             )}
             
 
@@ -232,6 +238,37 @@ function AppContent() {
 }
 
 function App() {
+  const [currentRoute, setCurrentRoute] = useState('main');
+
+  useEffect(() => {
+    const checkRoute = () => {
+      const path = window.location.pathname;
+      
+      if (path === '/reset-password') {
+        setCurrentRoute('reset-password');
+      } else {
+        setCurrentRoute('main');
+      }
+    };
+
+    checkRoute();
+    
+    // Listen for popstate events (back/forward navigation)
+    window.addEventListener('popstate', checkRoute);
+    
+    // Also listen for hashchange in case the URL changes
+    window.addEventListener('hashchange', checkRoute);
+    
+    return () => {
+      window.removeEventListener('popstate', checkRoute);
+      window.removeEventListener('hashchange', checkRoute);
+    };
+  }, []);
+
+  if (currentRoute === 'reset-password') {
+    return <ResetPassword />;
+  }
+
   return (
     <AuthProvider>
       <SubscriptionProvider>

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './AuthForm.css';
+import ForgotPassword from './ForgotPassword';
 
 const AuthForm = ({ onLogin, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -14,6 +16,7 @@ const AuthForm = ({ onLogin, onClose }) => {
   const [error, setError] = useState('');
 
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  console.log('API URL being used:', apiUrl);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -24,7 +27,9 @@ const AuthForm = ({ onLogin, onClose }) => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${apiUrl}/auth/google`;
+    const googleAuthUrl = `${apiUrl}/auth/google`;
+    console.log('Redirecting to Google OAuth:', googleAuthUrl);
+    window.location.href = googleAuthUrl;
   };
 
   const handleSubmit = async (e) => {
@@ -61,6 +66,23 @@ const AuthForm = ({ onLogin, onClose }) => {
     setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setError('');
   };
+
+  const handleForgotPassword = () => {
+    setShowForgotPassword(true);
+  };
+
+  const handleBackToLogin = () => {
+    setShowForgotPassword(false);
+  };
+
+  if (showForgotPassword) {
+    return (
+      <ForgotPassword 
+        onClose={onClose} 
+        onBackToLogin={handleBackToLogin} 
+      />
+    );
+  }
 
   return (
     <div className="auth-overlay">
@@ -121,6 +143,15 @@ const AuthForm = ({ onLogin, onClose }) => {
               placeholder="Enter your password"
               minLength={6}
             />
+            {isLogin && (
+              <button 
+                type="button" 
+                className="forgot-password-link"
+                onClick={handleForgotPassword}
+              >
+                Forgot your password?
+              </button>
+            )}
           </div>
 
           {!isLogin && (

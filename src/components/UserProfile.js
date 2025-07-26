@@ -23,12 +23,20 @@ const UserProfile = ({ onNavigateToPricing }) => {
     <div className="user-profile">
       <div className="user-avatar" onClick={toggleDropdown}>
         {user.picture ? (
-          <img src={user.picture} alt={user.name} className="avatar-image" />
-        ) : (
-          <div className="avatar-placeholder">
-            {user.name.charAt(0).toUpperCase()}
-          </div>
-        )}
+          <img 
+            src={user.picture} 
+            alt={user.name} 
+            className="avatar-image"
+            onError={(e) => {
+              console.log('Image failed to load:', user.picture);
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        <div className="avatar-placeholder" style={{ display: user.picture ? 'none' : 'flex' }}>
+          {user.name.charAt(0).toUpperCase()}
+        </div>
         <span className="user-name">{user.name}</span>
         <span className="dropdown-arrow">▼</span>
       </div>
