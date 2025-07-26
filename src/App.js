@@ -147,12 +147,6 @@ function AppContent() {
             ) : (
               <div className="auth-buttons">
                 <button 
-                  className="sign-up-btn"
-                  onClick={() => setShowLogin(true)}
-                >
-                  Sign Up
-                </button>
-                <button 
                   className="sign-in-btn"
                   onClick={() => setShowLogin(true)}
                 >

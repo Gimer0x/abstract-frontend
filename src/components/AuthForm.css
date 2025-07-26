@@ -190,10 +190,13 @@
 
 .auth-divider span {
   background: white;
-  padding: 0 16px;
+  padding: 0 20px;
   color: #6b7280;
   font-size: 14px;
   font-weight: 500;
+  position: relative;
+  z-index: 1;
+  display: inline-block;
 }
 
 .google-auth-btn {

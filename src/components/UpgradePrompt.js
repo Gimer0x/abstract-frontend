@@ -58,8 +58,10 @@ const UpgradePrompt = ({
       case 'feature':
         return [
           'Unlimited documents',
-          'Advanced analytics',
-          'White-label exports',
+          'All summary sizes (Short, Medium, Long)',
+          'All export formats (PDF, DOCX, TXT)',
+          'Full document history',
+          'No watermarks',
           'Priority support'
         ];
       case 'upgrade':

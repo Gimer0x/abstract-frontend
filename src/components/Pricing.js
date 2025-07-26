@@ -16,13 +16,13 @@ const Pricing = () => {
       features: [
         '5 documents per month',
         'Short & Medium summaries',
-        'Basic export formats (PDF, Word, TXT)',
+        'All export formats',
         'Watermarked exports',
-        'No document history'
+        'Limited document history'
       ],
       limitations: [
         'No long summaries',
-        'No document history',
+        'Limited document history',
         'Watermarked exports'
       ],
       buttonText: 'Current Plan',
@@ -35,13 +35,13 @@ const Pricing = () => {
       price: '$9.99',
       period: 'per month',
       yearlyPrice: '$99.99',
-      yearlyPeriod: 'per year (2 months free)',
+      yearlyPeriod: 'per year\n2 months free!',
       features: [
         '50 documents per month',
-        'All summary sizes (Short, Medium, Long)',
-        'All export formats (PDF, DOCX, TXT)',
-        'Full document history',
-        'No watermarks'
+        'All summary sizes',
+        'All export formats',
+        'No watermarks',
+        'Full document history'
       ],
       limitations: [],
       buttonText: 'Upgrade to Premium',
@@ -56,19 +56,19 @@ const Pricing = () => {
       price: '$19.99',
       period: 'per month',
       yearlyPrice: '$199.99',
-      yearlyPeriod: 'per year (2 months free)',
+      yearlyPeriod: 'per year\n2 months free!',
       features: [
         'Unlimited documents',
         'All summary sizes',
         'All export formats',
-        'Advanced analytics',
-        'White-label exports',
-        'No watermarks'
+        'No watermarks',
+        'Full document history'
       ],
       limitations: [],
       buttonText: 'Upgrade to Pro',
       buttonDisabled: false,
       popular: false,
+      bestOption: true,
       stripePriceId: 'price_1RocOECQX5MT1PoJEhUFD85P',
       stripeYearlyPriceId: 'price_1RocOECQX5MT1PoJt92UP2Q9'
     }
@@ -119,21 +119,27 @@ const Pricing = () => {
         {plans.map((plan) => (
           <div 
             key={plan.id} 
-            className={`pricing-card ${plan.popular ? 'popular' : ''} ${isCurrentPlan(plan.id) ? 'current-plan' : ''}`}
+            className={`pricing-card ${plan.popular ? 'popular' : ''} ${plan.bestOption ? 'best-option' : ''} ${isCurrentPlan(plan.id) ? 'current-plan' : ''}`}
           >
             {plan.popular && <div className="popular-badge">Most Popular</div>}
+            {plan.bestOption && <div className="best-option-badge">Best Option</div>}
             {isCurrentPlan(plan.id) && <div className="current-badge">Current Plan</div>}
             
             <div className="plan-header">
               <h2>{plan.name}</h2>
               <div className="price">
                 <span className="amount">{plan.price}</span>
-                <span className="period">/{plan.period}</span>
+                <div className="monthly-period">
+                  <span className="period">Monthly</span>
+                </div>
               </div>
               {plan.yearlyPrice && (
                 <div className="yearly-price">
                   <span className="amount">{plan.yearlyPrice}</span>
-                  <span className="period">/{plan.yearlyPeriod}</span>
+                  <span className="period"> Yearly</span>
+                  <div className="yearly-period">
+                    <span className="free-months">2 months free!</span>
+                  </div>
                 </div>
               )}
             </div>

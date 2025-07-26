@@ -46,74 +46,129 @@
 
 .header-nav {
   display: flex;
-  gap: 0.5rem;
+  gap: 8px;
+  align-items: center;
 }
 
 .nav-btn {
   background: transparent;
   color: #6b7280;
   border: 1px solid transparent;
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-btn:hover {
-  background: #f9fafb;
+  background: #f8fafc;
   color: #374151;
+  border-color: #e2e8f0;
 }
 
 .nav-btn.active {
-  background: #f3f4f6;
-  color: #1a1a1a;
+  background: #eff6ff;
+  color: #3b82f6;
+  border-color: #3b82f6;
   font-weight: 600;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.nav-btn:hover::before {
+  left: 100%;
 }
 
 .auth-buttons {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
+  margin-left: 16px;
 }
 
 .sign-up-btn {
   background: transparent;
   color: #3b82f6;
   border: 1px solid #3b82f6;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .sign-up-btn:hover {
   background: #3b82f6;
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.sign-up-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.sign-up-btn:hover::before {
+  left: 100%;
 }
 
 .sign-in-btn {
   background: #3b82f6;
   color: white;
   border: 1px solid #3b82f6;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .sign-in-btn:hover {
   background: #2563eb;
   border-color: #2563eb;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.sign-in-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.sign-in-btn:hover::before {
+  left: 100%;
 }
 
 .App-main {
@@ -177,6 +232,35 @@
   
   .header-left h1 {
     font-size: 24px;
+  }
+  
+  .header-right {
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  .header-nav {
+    justify-content: center;
+    gap: 4px;
+  }
+  
+  .nav-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .auth-buttons {
+    margin-left: 0;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .sign-up-btn,
+  .sign-in-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    min-width: 80px;
   }
   
   .App-main {
