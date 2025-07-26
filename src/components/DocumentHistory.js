@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useSubscription } from '../context/SubscriptionContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import './DocumentHistory.css';
 
 const DocumentHistory = () => {
   const { user } = useAuth();
+  const { usage, getRemainingDocuments } = useSubscription();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -182,7 +184,13 @@ const DocumentHistory = () => {
 
   return (
     <div className="document-history">
-      <h3>Document History</h3>
+      <div className="history-header">
+        <h3>Document History</h3>
+        <div className="document-stats">
+          <span>Documents: {usage?.documentCount || documents.length}</span>
+          <span>Remaining: {getRemainingDocuments() || 'N/A'}</span>
+        </div>
+      </div>
       {documents.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📄</div>

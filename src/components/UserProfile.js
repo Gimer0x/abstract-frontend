@@ -38,6 +38,13 @@ const UserProfile = ({ onNavigateToPricing }) => {
           {user.name.charAt(0).toUpperCase()}
         </div>
         <span className="user-name">{user.name}</span>
+        {subscription && (
+          <span className="plan-badge-inline">
+            {subscription.plan === 'free' && 'Free'}
+            {subscription.plan === 'premium' && 'Premium'}
+            {subscription.plan === 'pro' && 'Pro'}
+          </span>
+        )}
         <span className="dropdown-arrow">▼</span>
       </div>
 
@@ -50,32 +57,16 @@ const UserProfile = ({ onNavigateToPricing }) => {
             </div>
           </div>
           
-          {subscription && (
-            <div className="subscription-info">
-              <div className="plan-badge">
-                {subscription.plan === 'free' && '🆓 Free'}
-                {subscription.plan === 'premium' && '💎 Premium'}
-                {subscription.plan === 'pro' && '🚀 Pro'}
-              </div>
-              {usage && (
-                <div className="usage-info">
-                  <span>Documents: {usage.documentCount}</span>
-                  <span>Remaining: {getRemainingDocuments()}</span>
-                </div>
-              )}
-            </div>
-          )}
+
           
           <div className="dropdown-divider"></div>
           <button className="dropdown-item" onClick={() => {
             onNavigateToPricing();
             setShowDropdown(false);
           }}>
-            <span className="upgrade-icon">💎</span>
             Manage Subscription
           </button>
           <button className="dropdown-item" onClick={handleLogout}>
-            <span className="logout-icon">🚪</span>
             Sign Out
           </button>
         </div>
