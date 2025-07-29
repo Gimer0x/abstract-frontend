@@ -76,8 +76,14 @@ function AppContent() {
       toast.warning('Sign in to access medium and long summaries!');
     } else {
       toast.success('Document processed successfully!');
+      
+      // Automatically reload document history for authenticated users
+      if (user) {
+        // Trigger a custom event to reload document history
+        window.dispatchEvent(new CustomEvent('reloadDocumentHistory'));
+      }
     }
-  }, []);
+  }, [user]);
 
   const handleProcessingError = useCallback((error) => {
     toast.error(error.message || 'Error processing document');

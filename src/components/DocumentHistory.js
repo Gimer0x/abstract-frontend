@@ -10,8 +10,11 @@ const DocumentHistory = () => {
   const { usage, getRemainingDocuments } = useSubscription();
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [downloading, setDownloading] = useState({});
+  const [previousDocCount, setPreviousDocCount] = useState(0);
+  const [newlyAddedDocs, setNewlyAddedDocs] = useState(new Set());
 
   useEffect(() => {
     if (user) {
@@ -23,7 +26,10 @@ const DocumentHistory = () => {
   useEffect(() => {
     const handleReload = () => {
       if (user) {
-        fetchDocuments();
+        setRefreshing(true);
+        fetchDocuments().finally(() => {
+          setRefreshing(false);
+        });
       }
     };
 
@@ -43,7 +49,31 @@ const DocumentHistory = () => {
           'Content-Type': 'application/json'
         }
       });
+      
+      // Check if new documents were added
+      const newDocCount = response.data.length;
+      const hasNewDocuments = newDocCount > previousDocCount && previousDocCount > 0;
+      
+      // Identify newly added documents
+      if (hasNewDocuments && refreshing) {
+        const existingDocIds = new Set(documents.map(doc => doc._id));
+        const newDocIds = response.data
+          .filter(doc => !existingDocIds.has(doc._id))
+          .map(doc => doc._id);
+        
+        setNewlyAddedDocs(new Set(newDocIds));
+        
+        // Remove highlight after 3 seconds
+        setTimeout(() => {
+          setNewlyAddedDocs(new Set());
+        }, 3000);
+        
+        const newCount = newDocCount - previousDocCount;
+        toast.success(`${newCount} new document${newCount > 1 ? 's' : ''} added to history!`);
+      }
+      
       setDocuments(response.data);
+      setPreviousDocCount(newDocCount);
     } catch (error) {
       console.error('Error fetching documents:', error);
       setError('Failed to load document history');
@@ -186,6 +216,7 @@ const DocumentHistory = () => {
     <div className="document-history">
       <div className="history-header">
         <h3>Document History</h3>
+        {refreshing && <span className="refreshing-indicator">🔄 Updating...</span>}
         <div className="document-stats">
           <span>Documents: {usage?.documentCount || documents.length}</span>
           <span>Remaining: {getRemainingDocuments() || 'N/A'}</span>
@@ -200,7 +231,10 @@ const DocumentHistory = () => {
       ) : (
         <div className="documents-list">
           {documents.map((doc) => (
-            <div key={doc._id} className="document-item">
+            <div 
+              key={doc._id} 
+              className={`document-item ${newlyAddedDocs.has(doc._id) ? 'newly-added' : ''}`}
+            >
               <div className="document-icon">
                 {getFileTypeIcon(doc.fileType)}
               </div>
