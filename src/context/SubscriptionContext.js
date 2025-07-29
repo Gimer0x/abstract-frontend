@@ -18,7 +18,7 @@ export const SubscriptionProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch subscription and usage data
+  // Fetch subscription data
   const fetchSubscriptionData = useCallback(async () => {
     if (!isAuthenticated || !user) {
       setSubscription(null);
@@ -32,9 +32,16 @@ export const SubscriptionProvider = ({ children }) => {
       setError(null);
 
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError('No authentication token found');
+        return;
+      }
+
       const response = await fetch(`${API_BASE_URL}/billing/subscription`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -43,6 +50,11 @@ export const SubscriptionProvider = ({ children }) => {
         const data = await response.json();
         setSubscription(data.subscription);
         setUsage(data.usage);
+      } else if (response.status === 401) {
+        // Token is invalid, clear subscription data
+        setSubscription(null);
+        setUsage(null);
+        setError('Authentication required');
       } else {
         const errorText = await response.text();
         console.error('Failed to fetch subscription data:', response.status, errorText);
@@ -60,10 +72,16 @@ export const SubscriptionProvider = ({ children }) => {
   const createCheckoutSession = async (priceId) => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`${API_BASE_URL}/billing/create-checkout-session`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ priceId })
@@ -72,6 +90,8 @@ export const SubscriptionProvider = ({ children }) => {
       if (response.ok) {
         const { url } = await response.json();
         window.location.href = url; // Redirect to Stripe Checkout
+      } else if (response.status === 401) {
+        throw new Error('Authentication required');
       } else {
         throw new Error('Failed to create checkout session');
       }
@@ -85,10 +105,16 @@ export const SubscriptionProvider = ({ children }) => {
   const cancelSubscription = async () => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`${API_BASE_URL}/billing/cancel-subscription`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -96,6 +122,8 @@ export const SubscriptionProvider = ({ children }) => {
       if (response.ok) {
         await fetchSubscriptionData(); // Refresh data
         return true;
+      } else if (response.status === 401) {
+        throw new Error('Authentication required');
       } else {
         throw new Error('Failed to cancel subscription');
       }
@@ -109,10 +137,16 @@ export const SubscriptionProvider = ({ children }) => {
   const reactivateSubscription = async () => {
     try {
       const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`${API_BASE_URL}/billing/reactivate-subscription`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -120,6 +154,8 @@ export const SubscriptionProvider = ({ children }) => {
       if (response.ok) {
         await fetchSubscriptionData(); // Refresh data
         return true;
+      } else if (response.status === 401) {
+        throw new Error('Authentication required');
       } else {
         throw new Error('Failed to reactivate subscription');
       }

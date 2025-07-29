@@ -34,8 +34,14 @@ export const AuthProvider = ({ children }) => {
           setUser(response.data.user);
         } catch (error) {
           console.error('Auth check failed:', error);
-          logout();
+          // Only logout if it's a 401 error (invalid token)
+          if (error.response && error.response.status === 401) {
+            logout();
+          }
         }
+      } else {
+        // No token, user is not authenticated
+        setUser(null);
       }
       setLoading(false);
     };
