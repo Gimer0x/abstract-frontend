@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { toast } from 'react-toastify';
@@ -15,31 +15,10 @@ const DocumentHistory = () => {
   const [downloading, setDownloading] = useState({});
   const [previousDocCount, setPreviousDocCount] = useState(0);
   const [newlyAddedDocs, setNewlyAddedDocs] = useState(new Set());
+  const [currentPage, setCurrentPage] = useState(1);
+  const documentsPerPage = 4;
 
-  useEffect(() => {
-    if (user) {
-      fetchDocuments();
-    }
-  }, [user]);
-
-  // Listen for reload event from start over button
-  useEffect(() => {
-    const handleReload = () => {
-      if (user) {
-        setRefreshing(true);
-        fetchDocuments().finally(() => {
-          setRefreshing(false);
-        });
-      }
-    };
-
-    window.addEventListener('reloadDocumentHistory', handleReload);
-    return () => {
-      window.removeEventListener('reloadDocumentHistory', handleReload);
-    };
-  }, [user]);
-
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -79,6 +58,49 @@ const DocumentHistory = () => {
       setError('Failed to load document history');
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchDocuments();
+    }
+  }, [user]);
+
+  // Listen for reload event from start over button
+  useEffect(() => {
+    const handleReload = () => {
+      if (user) {
+        setRefreshing(true);
+        setCurrentPage(1); // Reset to first page when reloading
+        fetchDocuments().finally(() => {
+          setRefreshing(false);
+        });
+      }
+    };
+
+    window.addEventListener('reloadDocumentHistory', handleReload);
+    return () => {
+      window.removeEventListener('reloadDocumentHistory', handleReload);
+    };
+  }, [user]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(documents.length / documentsPerPage);
+  const startIndex = (currentPage - 1) * documentsPerPage;
+  const endIndex = startIndex + documentsPerPage;
+  const currentDocuments = documents.slice(startIndex, endIndex);
+
+  // Navigation functions
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -220,7 +242,33 @@ const DocumentHistory = () => {
         <div className="document-stats">
           <span>Documents: {usage?.documentCount || documents.length}</span>
           <span>Remaining: {getRemainingDocuments() || 'N/A'}</span>
+          {documents.length > documentsPerPage && (
+            <span>Showing: {startIndex + 1}-{Math.min(endIndex, documents.length)}</span>
+          )}
         </div>
+        {documents.length > documentsPerPage && (
+          <div className="pagination-controls">
+            <button 
+              className="pagination-btn" 
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+              title="Previous page"
+            >
+              ←
+            </button>
+            <span className="page-info">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button 
+              className="pagination-btn" 
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              title="Next page"
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
       {documents.length === 0 ? (
         <div className="empty-state">
@@ -230,51 +278,59 @@ const DocumentHistory = () => {
         </div>
       ) : (
         <div className="documents-list">
-          {documents.map((doc) => (
-            <div 
-              key={doc._id} 
-              className={`document-item ${newlyAddedDocs.has(doc._id) ? 'newly-added' : ''}`}
-            >
-              <div className="document-icon">
-                {getFileTypeIcon(doc.fileType)}
-              </div>
-              <div className="document-info">
-                <div className="document-name">{doc.originalFilename}</div>
-                <div className="document-meta">
-                  <span className="summary-size">{getSummarySizeLabel(doc.summarySize)} summary</span>
-                  <span className="document-date">{formatDate(doc.createdAt)}</span>
-                </div>
-              </div>
-              <div className="document-actions">
-                <div className="download-options">
-                  <button
-                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
-                    onClick={() => handleDownload(doc, 'pdf')}
-                    disabled={downloading[doc._id]}
-                    title="Download as PDF"
-                  >
-                    {downloading[doc._id] ? '⏳' : '📄'} PDF
-                  </button>
-                  <button
-                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
-                    onClick={() => handleDownload(doc, 'docx')}
-                    disabled={downloading[doc._id]}
-                    title="Download as Word"
-                  >
-                    {downloading[doc._id] ? '⏳' : '📘'} Word
-                  </button>
-                  <button
-                    className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
-                    onClick={() => handleDownload(doc, 'txt')}
-                    disabled={downloading[doc._id]}
-                    title="Download as Text"
-                  >
-                    {downloading[doc._id] ? '⏳' : '📝'} TXT
-                  </button>
-                </div>
-              </div>
+          {currentDocuments.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📄</div>
+              <p>No documents on this page</p>
+              <span>Try navigating to another page</span>
             </div>
-          ))}
+          ) : (
+            currentDocuments.map((doc) => (
+              <div 
+                key={doc._id} 
+                className={`document-item ${newlyAddedDocs.has(doc._id) ? 'newly-added' : ''}`}
+              >
+                <div className="document-icon">
+                  {getFileTypeIcon(doc.fileType)}
+                </div>
+                <div className="document-info">
+                  <div className="document-name">{doc.originalFilename}</div>
+                  <div className="document-meta">
+                    <span className="summary-size">{getSummarySizeLabel(doc.summarySize)} summary</span>
+                    <span className="document-date">{formatDate(doc.createdAt)}</span>
+                  </div>
+                </div>
+                <div className="document-actions">
+                  <div className="download-options">
+                    <button
+                      className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                      onClick={() => handleDownload(doc, 'pdf')}
+                      disabled={downloading[doc._id]}
+                      title="Download as PDF"
+                    >
+                      {downloading[doc._id] ? '⏳' : '📄'} PDF
+                    </button>
+                    <button
+                      className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                      onClick={() => handleDownload(doc, 'docx')}
+                      disabled={downloading[doc._id]}
+                      title="Download as Word"
+                    >
+                      {downloading[doc._id] ? '⏳' : '📘'} Word
+                    </button>
+                    <button
+                      className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
+                      onClick={() => handleDownload(doc, 'txt')}
+                      disabled={downloading[doc._id]}
+                      title="Download as Text"
+                    >
+                      {downloading[doc._id] ? '⏳' : '📝'} TXT
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
