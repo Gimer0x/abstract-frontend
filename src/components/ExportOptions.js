@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import './ExportOptions.css';
 
@@ -13,9 +13,18 @@ const ExportOptions = ({
   isGuest = false // New prop to identify guest users
 }) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+  const [exportingFormat, setExportingFormat] = useState(null);
+  const [exportMessage, setExportMessage] = useState('');
 
   const handleExport = async (format) => {
-    onExportStart();
+    setExportingFormat(format);
+    
+    // Set specific message for MP3 export
+    if (format === 'mp3') {
+      setExportMessage('Generating professional audio narration...');
+    } else {
+      setExportMessage(`Preparing ${format.toUpperCase()} export...`);
+    }
     
     try {
       const response = await axios.post(
@@ -47,6 +56,8 @@ const ExportOptions = ({
       window.URL.revokeObjectURL(url);
 
       onExportComplete();
+      setExportingFormat(null);
+      setExportMessage('');
     } catch (error) {
       console.error(`Export ${format} error:`, error);
       
@@ -61,6 +72,8 @@ const ExportOptions = ({
       }
       
       onExportError({ message: errorMessage });
+      setExportingFormat(null);
+      setExportMessage('');
     }
   };
 
@@ -85,6 +98,13 @@ const ExportOptions = ({
       icon: '📄',
       description: 'Plain text format',
       color: '#6c757d'
+    },
+    {
+      format: 'mp3',
+      label: 'Audio',
+      icon: '🎵',
+      description: 'Professional audio narration',
+      color: '#28a745'
     }
   ];
 
@@ -101,11 +121,15 @@ const ExportOptions = ({
           <div className="guest-icon">🔒</div>
           <div className="guest-content">
             <h4>Sign in to Export</h4>
-            <p>Guest users can copy the summary text, but need to sign in to download documents in PDF, Word, or Text formats.</p>
+            <p>Guest users can copy the summary text, but need to sign in to download documents in PDF, Word, Text, or Audio formats.</p>
             <div className="guest-benefits">
               <div className="benefit-item">
                 <span className="benefit-icon">📄</span>
                 <span>Export to PDF, Word, and Text</span>
+              </div>
+              <div className="benefit-item">
+                <span className="benefit-icon">🎵</span>
+                <span>Download as professional audio</span>
               </div>
               <div className="benefit-item">
                 <span className="benefit-icon">📚</span>
@@ -133,9 +157,9 @@ const ExportOptions = ({
         {exportOptions.map((option) => (
           <button
             key={option.format}
-            className={`export-button ${isExporting ? 'disabled' : ''}`}
+            className={`export-button ${exportingFormat === option.format ? 'disabled' : ''}`}
             onClick={() => handleExport(option.format)}
-            disabled={isExporting}
+            disabled={exportingFormat !== null}
             style={{ '--button-color': option.color }}
           >
             <div className="export-icon">{option.icon}</div>
@@ -143,14 +167,14 @@ const ExportOptions = ({
               <span className="export-label">{option.label}</span>
               <span className="export-description">{option.description}</span>
             </div>
-            {isExporting && <div className="export-spinner"></div>}
+            {exportingFormat === option.format && <div className="export-spinner"></div>}
           </button>
         ))}
       </div>
 
-      {isExporting && (
+      {exportingFormat && (
         <div className="export-status">
-          <p>Preparing your export...</p>
+          <p>{exportMessage}</p>
         </div>
       )}
     </div>

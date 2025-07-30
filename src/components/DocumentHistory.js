@@ -326,6 +326,14 @@ const DocumentHistory = () => {
                     >
                       {downloading[doc._id] ? '⏳' : '📝'} TXT
                     </button>
+                    <button
+                      className={`download-btn download-btn-audio ${downloading[doc._id] ? 'downloading' : ''}`}
+                      onClick={() => handleDownload(doc, 'mp3')}
+                      disabled={downloading[doc._id]}
+                      title="Download as Audio"
+                    >
+                      {downloading[doc._id] ? '⏳' : '🎵'} Audio
+                    </button>
                   </div>
                 </div>
               </div>
