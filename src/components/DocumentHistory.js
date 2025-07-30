@@ -140,6 +140,11 @@ const DocumentHistory = () => {
     const docId = doc._id;
     setDownloading(prev => ({ ...prev, [docId]: true }));
 
+    // Show specific message for MP3 processing at the start
+    if (format === 'mp3') {
+      toast.info('Audio file is being processed and will download shortly!');
+    }
+
     try {
       console.log('Downloading document:', { 
         docId, 
@@ -175,7 +180,12 @@ const DocumentHistory = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
       
-      toast.success(`${format.toUpperCase()} download started!`);
+      // Show success message
+      if (format === 'mp3') {
+        toast.success('Audio file download started!');
+      } else {
+        toast.success(`${format.toUpperCase()} download started!`);
+      }
     } catch (error) {
       console.error('Download error:', error);
       
