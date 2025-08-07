@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 
 const SubscriptionContext = createContext();
@@ -251,7 +251,7 @@ export const SubscriptionProvider = ({ children }) => {
     fetchSubscriptionData();
   }, [fetchSubscriptionData]);
 
-  const value = {
+  const value = useMemo(() => ({
     subscription,
     usage,
     loading,
@@ -264,7 +264,20 @@ export const SubscriptionProvider = ({ children }) => {
     getRemainingDocuments,
     getRemainingPages,
     refreshData
-  };
+  }), [
+    subscription,
+    usage,
+    loading,
+    error,
+    createCheckoutSession,
+    cancelSubscription,
+    reactivateSubscription,
+    canAccessFeature,
+    canUploadMore,
+    getRemainingDocuments,
+    getRemainingPages,
+    refreshData
+  ]);
 
   return (
     <SubscriptionContext.Provider value={value}>

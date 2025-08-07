@@ -323,21 +323,6 @@
   cursor: not-allowed;
 }
 
-/* MP3 download button specific styling */
-.download-btn-audio {
-  background: white;
-  border-color: #6c757d;
-  color: #6c757d;
-}
-
-.download-btn-audio:hover {
-  background: #f8f9fa;
-  border-color: #495057;
-  color: #495057;
-}
-
-
-
 /* Responsive design */
 @media (max-width: 768px) {
   .document-item {

@@ -5,7 +5,7 @@ import './UserProfile.css';
 
 const UserProfile = ({ onNavigateToPricing }) => {
   const { user, logout } = useAuth();
-  const { subscription, usage, getRemainingDocuments } = useSubscription();
+  const { subscription } = useSubscription();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -35,8 +35,8 @@ const UserProfile = ({ onNavigateToPricing }) => {
           />
         ) : null}
         <div className="avatar-placeholder" style={{ display: user.picture ? 'none' : 'flex' }}>
-          {user.name.charAt(0).toUpperCase()}
-        </div>
+            {user.name.charAt(0).toUpperCase()}
+          </div>
         <span className="user-name">{user.name}</span>
         {subscription && (
           <span className="plan-badge-inline">

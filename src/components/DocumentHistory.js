@@ -20,6 +20,7 @@ const DocumentHistory = () => {
 
   const fetchDocuments = useCallback(async () => {
     try {
+      console.log('Fetching documents for user:', user?.email);
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents`, {
@@ -59,7 +60,7 @@ const DocumentHistory = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [refreshing, previousDocCount]);
 
   useEffect(() => {
     if (user) {
@@ -140,9 +141,14 @@ const DocumentHistory = () => {
     const docId = doc._id;
     setDownloading(prev => ({ ...prev, [docId]: true }));
 
-    // Show specific message for MP3 processing at the start
+    // Show specific message for MP3 export
     if (format === 'mp3') {
-      toast.info('Audio file is being processed and will download shortly!');
+      toast.info('Generating professional audio narration. This might take a moment...', {
+        autoClose: 12000, // Show for 8 seconds instead of default
+        position: "top-right"
+      });
+    } else {
+      toast.info(`Preparing ${format.toUpperCase()} export...`);
     }
 
     try {
@@ -180,12 +186,7 @@ const DocumentHistory = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
       
-      // Show success message
-      if (format === 'mp3') {
-        toast.success('Audio file download started!');
-      } else {
-        toast.success(`${format.toUpperCase()} download started!`);
-      }
+      toast.success(`${format.toUpperCase()} download started!`);
     } catch (error) {
       console.error('Download error:', error);
       
@@ -337,7 +338,7 @@ const DocumentHistory = () => {
                       {downloading[doc._id] ? '⏳' : '📝'} TXT
                     </button>
                     <button
-                      className={`download-btn download-btn-audio ${downloading[doc._id] ? 'downloading' : ''}`}
+                      className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
                       onClick={() => handleDownload(doc, 'mp3')}
                       disabled={downloading[doc._id]}
                       title="Download as Audio"

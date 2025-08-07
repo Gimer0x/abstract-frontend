@@ -21,7 +21,7 @@ const ExportOptions = ({
     
     // Set specific message for MP3 export
     if (format === 'mp3') {
-      setExportMessage('Generating professional audio narration...');
+      setExportMessage('Generating professional audio narration... This may take a moment as we create high-quality speech synthesis.');
     } else {
       setExportMessage(`Preparing ${format.toUpperCase()} export...`);
     }

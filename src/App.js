@@ -23,6 +23,7 @@ function AppContent() {
   const [summarySize, setSummarySize] = useState('short');
   const [showLogin, setShowLogin] = useState(false);
   const [currentPage, setCurrentPage] = useState('main');
+  const [tokenProcessed, setTokenProcessed] = useState(false);
 
   const handleStartOver = useCallback(() => {
     setSummaryData(null);
@@ -44,12 +45,18 @@ function AppContent() {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     
-    if (token) {
+    if (token && !user && !tokenProcessed) {
+      console.log('Processing auth callback token');
+      setTokenProcessed(true);
       login(token);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (token && user) {
+      console.log('Token exists but user is already logged in, cleaning up URL');
+      setTokenProcessed(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
-  }, [login]);
+  }, [login, user, tokenProcessed]);
 
   // Add keyboard shortcut for starting over
   useEffect(() => {
