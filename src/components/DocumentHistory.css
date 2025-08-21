@@ -2,7 +2,7 @@
   background: white;
   border-radius: 12px;
   padding: 24px;
-  margin-top: 24px;
+  margin-top: 0px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -12,8 +12,10 @@
   align-items: center;
   margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   text-align: center;
+  width: 100%;
+  padding: 0 8px;
 }
 
 .document-history h3 {
@@ -25,18 +27,22 @@
 
 .document-stats {
   display: flex;
-  gap: 16px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 12px;
   color: #666;
   font-weight: 500;
   justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .document-stats span {
-  padding: 4px 8px;
+  padding: 3px 6px;
   background: #f5f5f5;
   border-radius: 4px;
   white-space: nowrap;
+  font-size: 11px;
+  flex-shrink: 0;
 }
 
 .refreshing-indicator {
@@ -61,10 +67,11 @@
 .pagination-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-top: 12px;
   justify-content: center;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .pagination-btn {
@@ -94,10 +101,10 @@
 }
 
 .page-info {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   font-weight: 500;
-  padding: 6px 12px;
+  padding: 4px 8px;
   background: #f8f9fa;
   border-radius: 6px;
   min-width: 80px;
@@ -146,7 +153,7 @@
 .document-item {
   display: grid;
   grid-template-columns: 40px 1fr;
-  gap: 16px;
+  gap: 12px;
   padding: 16px;
   border: 1px solid #eee;
   border-radius: 8px;
@@ -272,25 +279,28 @@
   display: flex;
   justify-content: flex-start;
   margin-top: 8px;
+  min-width: 0;
 }
 
 .download-options {
   display: flex;
-  gap: 8px;
+  gap: 1px;
   flex-wrap: nowrap;
   justify-content: flex-start;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .download-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  gap: 1px;
+  padding: 2px 3px;
   border: 1px solid #ddd;
   background: white;
   color: #333;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -298,6 +308,7 @@
   white-space: nowrap;
   flex-shrink: 0;
   line-height: 1;
+  min-width: 0;
   min-height: 32px;
 }
 
@@ -366,7 +377,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 700px) {
   .document-history {
     padding: 16px;
   }

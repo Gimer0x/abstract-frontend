@@ -1,16 +1,16 @@
-import React from 'react';
 import { useSubscription } from '../context/SubscriptionContext';
 import './UpgradePrompt.css';
 
-const UpgradePrompt = ({ 
-  type = 'limit', 
-  feature = null, 
-  onClose, 
+const UpgradePrompt = ({
+  type = 'limit',
+  feature = null,
+  onClose,
   onUpgrade,
   onNavigateToPricing,
-  show = false 
+  show = false,
 }) => {
-  const { subscription, getRemainingDocuments, getRemainingPages, usage } = useSubscription();
+  const { subscription, getRemainingDocuments, getRemainingPages, usage } =
+    useSubscription();
 
   if (!show) return null;
 
@@ -29,13 +29,13 @@ const UpgradePrompt = ({
 
   const getMessage = () => {
     const plan = subscription?.plan || 'free';
-    
+
     switch (type) {
       case 'limit':
         if (plan === 'free') {
-          return 'You\'ve reached your monthly limits. Free users can process up to 5 documents and 100 pages per month.';
+          return "You've reached your monthly limits. Free users can process up to 5 documents and 100 pages per month.";
         } else {
-          return 'You\'ve reached your monthly document limit. Upgrade to continue processing documents.';
+          return "You've reached your monthly document limit. Upgrade to continue processing documents.";
         }
       case 'feature':
         return `This feature is only available for Premium and Pro users. Upgrade to unlock ${feature}.`;
@@ -53,7 +53,7 @@ const UpgradePrompt = ({
           'More documents per month',
           'All summary sizes (Short, Medium, Long)',
           'Full document history',
-          'No watermarks on exports'
+          'No watermarks on exports',
         ];
       case 'feature':
         return [
@@ -62,21 +62,17 @@ const UpgradePrompt = ({
           'All export formats (PDF, DOCX, TXT)',
           'Full document history',
           'No watermarks',
-          'Priority support'
+          'Priority support',
         ];
       case 'upgrade':
         return [
           'Higher document limits',
           'Premium features',
           'Better export options',
-          'Enhanced support'
+          'Enhanced support',
         ];
       default:
-        return [
-          'Premium features',
-          'Higher limits',
-          'Better experience'
-        ];
+        return ['Premium features', 'Higher limits', 'Better experience'];
     }
   };
 
@@ -92,26 +88,26 @@ const UpgradePrompt = ({
   };
 
   return (
-    <div className="upgrade-prompt-overlay">
-      <div className="upgrade-prompt-modal">
-        <div className="upgrade-prompt-header">
+    <div className='upgrade-prompt-overlay'>
+      <div className='upgrade-prompt-modal'>
+        <div className='upgrade-prompt-header'>
           <h2>{getTitle()}</h2>
           {onClose && (
-            <button className="close-btn" onClick={onClose}>
+            <button className='close-btn' onClick={onClose}>
               ×
             </button>
           )}
         </div>
 
-        <div className="upgrade-prompt-content">
-          <div className="upgrade-icon">
+        <div className='upgrade-prompt-content'>
+          <div className='upgrade-icon'>
             <span>🚀</span>
           </div>
-          
-          <p className="upgrade-message">{getMessage()}</p>
+
+          <p className='upgrade-message'>{getMessage()}</p>
 
           {type === 'limit' && (
-            <div className="usage-info">
+            <div className='usage-info'>
               {subscription?.plan === 'free' ? (
                 <>
                   <p>Documents: {usage?.documentsThisMonth || 0}/5</p>
@@ -121,19 +117,21 @@ const UpgradePrompt = ({
                 </>
               ) : (
                 <>
-                  <p>Current usage: {usage?.documentsThisMonth || 0}/50 documents</p>
+                  <p>
+                    Current usage: {usage?.documentsThisMonth || 0}/50 documents
+                  </p>
                   <p>Remaining: {getRemainingDocuments()} documents</p>
                 </>
               )}
             </div>
           )}
 
-          <div className="upgrade-features">
+          <div className='upgrade-features'>
             <h3>Upgrade to get:</h3>
             <ul>
               {getFeatures().map((feature, index) => (
                 <li key={index}>
-                  <span className="checkmark">✓</span>
+                  <span className='checkmark'>✓</span>
                   {feature}
                 </li>
               ))}
@@ -141,12 +139,12 @@ const UpgradePrompt = ({
           </div>
         </div>
 
-        <div className="upgrade-prompt-actions">
-          <button className="upgrade-btn primary" onClick={handleUpgrade}>
+        <div className='upgrade-prompt-actions'>
+          <button className='upgrade-btn primary' onClick={handleUpgrade}>
             View Plans & Upgrade
           </button>
           {onClose && (
-            <button className="upgrade-btn secondary" onClick={onClose}>
+            <button className='upgrade-btn secondary' onClick={onClose}>
               Maybe Later
             </button>
           )}
@@ -156,4 +154,4 @@ const UpgradePrompt = ({
   );
 };
 
-export default UpgradePrompt; 
+export default UpgradePrompt;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import './AuthForm.css';
 import ForgotPassword from './ForgotPassword';
@@ -10,7 +10,7 @@ const AuthForm = ({ onLogin, onClose }) => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,10 +18,10 @@ const AuthForm = ({ onLogin, onClose }) => {
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5001';
   console.log('API URL being used:', apiUrl);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = e => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     setError(''); // Clear error when user starts typing
   };
@@ -32,7 +32,7 @@ const AuthForm = ({ onLogin, onClose }) => {
     window.location.href = googleAuthUrl;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -45,17 +45,22 @@ const AuthForm = ({ onLogin, onClose }) => {
       }
 
       const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      const payload = isLogin 
+      const payload = isLogin
         ? { email: formData.email, password: formData.password }
-        : { name: formData.name, email: formData.email, password: formData.password };
+        : {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        };
 
       const response = await axios.post(`${apiUrl}${endpoint}`, payload);
-      
+
       // Call the onLogin callback with the token
       onLogin(response.data.token);
-      
     } catch (error) {
-      setError(error.response?.data?.error || 'An error occurred. Please try again.');
+      setError(
+        error.response?.data?.error || 'An error occurred. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -77,76 +82,73 @@ const AuthForm = ({ onLogin, onClose }) => {
 
   if (showForgotPassword) {
     return (
-      <ForgotPassword 
-        onClose={onClose} 
-        onBackToLogin={handleBackToLogin} 
-      />
+      <ForgotPassword onClose={onClose} onBackToLogin={handleBackToLogin} />
     );
   }
 
   return (
-    <div className="auth-overlay">
-      <div className="auth-modal">
-        <button className="auth-close-btn" onClick={onClose}>
+    <div className='auth-overlay'>
+      <div className='auth-modal'>
+        <button className='auth-close-btn' onClick={onClose}>
           ×
         </button>
-        
-        <div className="auth-header">
+
+        <div className='auth-header'>
           <h2>{isLogin ? 'Sign In' : 'Create Account'}</h2>
-          <p>{isLogin ? 'Welcome back! Sign in to your account' : 'Join us to start summarizing documents'}</p>
+          <p>
+            {isLogin
+              ? 'Welcome back! Sign in to your account'
+              : 'Join us to start summarizing documents'}
+          </p>
         </div>
 
-        {error && (
-          <div className="auth-error">
-            {error}
-          </div>
-        )}
+        {error && <div className='auth-error'>{error}</div>}
 
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit} className='auth-form'>
           {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
+            <div className='form-group'>
+              <label htmlFor='name'>Full Name</label>
               <input
-                type="text"
-                id="name"
-                name="name"
+                type='text'
+                id='name'
+                name='name'
                 value={formData.name}
                 onChange={handleInputChange}
                 required={!isLogin}
-                placeholder="Enter your full name"
+                placeholder='Enter your full name'
               />
             </div>
           )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+          <div className='form-group'>
+            <label htmlFor='email'>Email</label>
             <input
-              type="email"
-              id="email"
-              name="email"
+              type='email'
+              id='email'
+              name='email'
               value={formData.email}
               onChange={handleInputChange}
               required
-              placeholder="Enter your email"
+              placeholder='Enter your email'
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className='form-group'>
+            <label htmlFor='password'>Password</label>
             <input
-              type="password"
-              id="password"
-              name="password"
+              type='password'
+              id='password'
+              name='password'
               value={formData.password}
               onChange={handleInputChange}
               required
-              placeholder="Enter your password"
+              placeholder='Enter your password'
               minLength={6}
             />
             {isLogin && (
-              <button 
-                type="button" 
-                className="forgot-password-link"
+              <button
+                type='button'
+                className='forgot-password-link'
                 onClick={handleForgotPassword}
               >
                 Forgot your password?
@@ -155,53 +157,49 @@ const AuthForm = ({ onLogin, onClose }) => {
           </div>
 
           {!isLogin && (
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+            <div className='form-group'>
+              <label htmlFor='confirmPassword'>Confirm Password</label>
               <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
+                type='password'
+                id='confirmPassword'
+                name='confirmPassword'
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 required={!isLogin}
-                placeholder="Confirm your password"
+                placeholder='Confirm your password'
                 minLength={6}
               />
             </div>
           )}
 
-          <button 
-            type="submit" 
-            className="auth-submit-btn"
-            disabled={loading}
-          >
-            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+          <button type='submit' className='auth-submit-btn' disabled={loading}>
+            {loading ? 'Processing...' : isLogin ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
-        <div className="auth-divider">
+        <div className='auth-divider'>
           <span>or</span>
         </div>
 
-        <button 
-          className="google-auth-btn"
+        <button
+          className='google-auth-btn'
           onClick={handleGoogleLogin}
-          type="button"
+          type='button'
         >
-          <img 
-            src="https://developers.google.com/identity/images/g-logo.png" 
-            alt="Google" 
-            className="google-icon"
+          <img
+            src='https://developers.google.com/identity/images/g-logo.png'
+            alt='Google'
+            className='google-icon'
           />
           Continue with Google
         </button>
 
-        <div className="auth-footer">
+        <div className='auth-footer'>
           <p>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button 
-              type="button" 
-              className="auth-toggle-btn"
+            {isLogin ? "Don't have an account? " : 'Already have an account? '}
+            <button
+              type='button'
+              className='auth-toggle-btn'
               onClick={toggleMode}
             >
               {isLogin ? 'Sign up' : 'Sign in'}
@@ -209,13 +207,9 @@ const AuthForm = ({ onLogin, onClose }) => {
           </p>
         </div>
 
-        <div className="guest-option">
+        <div className='guest-option'>
           <p>Or continue as a guest (limited to short summaries only)</p>
-          <button 
-            type="button"
-            className="guest-btn"
-            onClick={onClose}
-          >
+          <button type='button' className='guest-btn' onClick={onClose}>
             Continue as Guest
           </button>
         </div>
@@ -224,4 +218,4 @@ const AuthForm = ({ onLogin, onClose }) => {
   );
 };
 
-export default AuthForm; 
+export default AuthForm;

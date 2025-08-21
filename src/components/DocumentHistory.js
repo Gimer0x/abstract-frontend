@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { toast } from 'react-toastify';
@@ -23,35 +23,41 @@ const DocumentHistory = () => {
       console.log('Fetching documents for user:', user?.email);
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/api/documents`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
-      
+      );
+
       // Check if new documents were added
       const newDocCount = response.data.length;
-      const hasNewDocuments = newDocCount > previousDocCount && previousDocCount > 0;
-      
+      const hasNewDocuments =
+        newDocCount > previousDocCount && previousDocCount > 0;
+
       // Identify newly added documents
       if (hasNewDocuments && refreshing) {
         const existingDocIds = new Set(documents.map(doc => doc._id));
         const newDocIds = response.data
           .filter(doc => !existingDocIds.has(doc._id))
           .map(doc => doc._id);
-        
+
         setNewlyAddedDocs(new Set(newDocIds));
-        
+
         // Remove highlight after 3 seconds
         setTimeout(() => {
           setNewlyAddedDocs(new Set());
         }, 3000);
-        
+
         const newCount = newDocCount - previousDocCount;
-        toast.success(`${newCount} new document${newCount > 1 ? 's' : ''} added to history!`);
+        toast.success(
+          `${newCount} new document${newCount > 1 ? 's' : ''} added to history!`
+        );
       }
-      
+
       setDocuments(response.data);
       setPreviousDocCount(newDocCount);
     } catch (error) {
@@ -105,32 +111,32 @@ const DocumentHistory = () => {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
-  const getFileTypeIcon = (fileType) => {
+  const getFileTypeIcon = fileType => {
     const icons = {
       '.pdf': '📄',
       '.txt': '📝',
       '.docx': '📘',
       '.rtf': '📄',
-      '.odt': '📄'
+      '.odt': '📄',
     };
     return icons[fileType] || '📄';
   };
 
-  const getSummarySizeLabel = (size) => {
+  const getSummarySizeLabel = size => {
     const labels = {
       short: 'Short',
       medium: 'Medium',
-      long: 'Long'
+      long: 'Long',
     };
     return labels[size] || size;
   };
@@ -143,20 +149,23 @@ const DocumentHistory = () => {
 
     // Show specific message for MP3 export
     if (format === 'mp3') {
-      toast.info('Generating professional audio narration. This might take a moment...', {
-        autoClose: 12000, // Show for 8 seconds instead of default
-        position: "top-right"
-      });
+      toast.info(
+        'Generating professional audio narration. This might take a moment...',
+        {
+          autoClose: 12000, // Show for 8 seconds instead of default
+          position: 'top-right',
+        }
+      );
     } else {
       toast.info(`Preparing ${format.toUpperCase()} export...`);
     }
 
     try {
-      console.log('Downloading document:', { 
-        docId, 
-        format, 
+      console.log('Downloading document:', {
+        docId,
+        format,
         filename: doc.originalFilename,
-        hasSummary: !!doc.summary 
+        hasSummary: !!doc.summary,
       });
 
       const token = localStorage.getItem('token');
@@ -165,14 +174,14 @@ const DocumentHistory = () => {
         {
           summaryData: doc.summary,
           originalFilename: doc.originalFilename,
-          summarySize: doc.summarySize
+          summarySize: doc.summarySize,
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
-          responseType: 'blob'
+          responseType: 'blob',
         }
       );
 
@@ -180,18 +189,21 @@ const DocumentHistory = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `summary-${doc.originalFilename.replace(/\.[^/.]+$/, '')}.${format}`);
+      link.setAttribute(
+        'download',
+        `summary-${doc.originalFilename.replace(/\.[^/.]+$/, '')}.${format}`
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      
+
       toast.success(`${format.toUpperCase()} download started!`);
     } catch (error) {
       console.error('Download error:', error);
-      
+
       let errorMessage = 'Failed to download document';
-      
+
       if (error.response) {
         // Server responded with error
         if (error.response.data instanceof Blob) {
@@ -229,52 +241,56 @@ const DocumentHistory = () => {
 
   if (loading) {
     return (
-      <div className="document-history">
+      <div className='document-history'>
         <h3>Document History</h3>
-        <div className="loading">Loading your documents...</div>
+        <div className='loading'>Loading your documents...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="document-history">
+      <div className='document-history'>
         <h3>Document History</h3>
-        <div className="error">{error}</div>
+        <div className='error'>{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="document-history">
-      <div className="history-header">
+    <div className='document-history'>
+      <div className='history-header'>
         <h3>Document History</h3>
-        {refreshing && <span className="refreshing-indicator">🔄 Updating...</span>}
-        <div className="document-stats">
+        {refreshing && (
+          <span className='refreshing-indicator'>🔄 Updating...</span>
+        )}
+        <div className='document-stats'>
           <span>Documents: {usage?.documentCount || documents.length}</span>
           <span>Remaining: {getRemainingDocuments() || 'N/A'}</span>
           {documents.length > documentsPerPage && (
-            <span>Showing: {startIndex + 1}-{Math.min(endIndex, documents.length)}</span>
+            <span>
+              Showing: {startIndex + 1}-{Math.min(endIndex, documents.length)}
+            </span>
           )}
         </div>
         {documents.length > documentsPerPage && (
-          <div className="pagination-controls">
-            <button 
-              className="pagination-btn" 
+          <div className='pagination-controls'>
+            <button
+              className='pagination-btn'
               onClick={goToPreviousPage}
               disabled={currentPage === 1}
-              title="Previous page"
+              title='Previous page'
             >
               ←
             </button>
-            <span className="page-info">
+            <span className='page-info'>
               Page {currentPage} of {totalPages}
             </span>
-            <button 
-              className="pagination-btn" 
+            <button
+              className='pagination-btn'
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
-              title="Next page"
+              title='Next page'
             >
               →
             </button>
@@ -282,42 +298,46 @@ const DocumentHistory = () => {
         )}
       </div>
       {documents.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📄</div>
+        <div className='empty-state'>
+          <div className='empty-icon'>📄</div>
           <p>No documents processed yet</p>
           <span>Your processed documents will appear here</span>
         </div>
       ) : (
-        <div className="documents-list">
+        <div className='documents-list'>
           {currentDocuments.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">📄</div>
+            <div className='empty-state'>
+              <div className='empty-icon'>📄</div>
               <p>No documents on this page</p>
               <span>Try navigating to another page</span>
             </div>
           ) : (
-            currentDocuments.map((doc) => (
-              <div 
-                key={doc._id} 
+            currentDocuments.map(doc => (
+              <div
+                key={doc._id}
                 className={`document-item ${newlyAddedDocs.has(doc._id) ? 'newly-added' : ''}`}
               >
-                <div className="document-icon">
+                <div className='document-icon'>
                   {getFileTypeIcon(doc.fileType)}
                 </div>
-                <div className="document-info">
-                  <div className="document-name">{doc.originalFilename}</div>
-                  <div className="document-meta">
-                    <span className="summary-size">{getSummarySizeLabel(doc.summarySize)} summary</span>
-                    <span className="document-date">{formatDate(doc.createdAt)}</span>
+                <div className='document-info'>
+                  <div className='document-name'>{doc.originalFilename}</div>
+                  <div className='document-meta'>
+                    <span className='summary-size'>
+                      {getSummarySizeLabel(doc.summarySize)} summary
+                    </span>
+                    <span className='document-date'>
+                      {formatDate(doc.createdAt)}
+                    </span>
                   </div>
                 </div>
-                <div className="document-actions">
-                  <div className="download-options">
+                <div className='document-actions'>
+                  <div className='download-options'>
                     <button
                       className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
                       onClick={() => handleDownload(doc, 'pdf')}
                       disabled={downloading[doc._id]}
-                      title="Download as PDF"
+                      title='Download as PDF'
                     >
                       {downloading[doc._id] ? '⏳' : '📄'} PDF
                     </button>
@@ -325,7 +345,7 @@ const DocumentHistory = () => {
                       className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
                       onClick={() => handleDownload(doc, 'docx')}
                       disabled={downloading[doc._id]}
-                      title="Download as Word"
+                      title='Download as Word'
                     >
                       {downloading[doc._id] ? '⏳' : '📘'} Word
                     </button>
@@ -333,7 +353,7 @@ const DocumentHistory = () => {
                       className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
                       onClick={() => handleDownload(doc, 'txt')}
                       disabled={downloading[doc._id]}
-                      title="Download as Text"
+                      title='Download as Text'
                     >
                       {downloading[doc._id] ? '⏳' : '📝'} TXT
                     </button>
@@ -341,7 +361,7 @@ const DocumentHistory = () => {
                       className={`download-btn ${downloading[doc._id] ? 'downloading' : ''}`}
                       onClick={() => handleDownload(doc, 'mp3')}
                       disabled={downloading[doc._id]}
-                      title="Download as Audio"
+                      title='Download as Audio'
                     >
                       {downloading[doc._id] ? '⏳' : '🎵'} Audio
                     </button>
@@ -356,4 +376,4 @@ const DocumentHistory = () => {
   );
 };
 
-export default DocumentHistory; 
+export default DocumentHistory;

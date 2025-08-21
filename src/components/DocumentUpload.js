@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -6,166 +6,197 @@ import { useSubscription } from '../context/SubscriptionContext';
 import UpgradePrompt from './UpgradePrompt';
 import './DocumentUpload.css';
 
-const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, setIsProcessing, summarySize, onNavigateToPricing }) => {
+const DocumentUpload = ({
+  onDocumentProcessed,
+  onProcessingError,
+  isProcessing,
+  setIsProcessing,
+  summarySize,
+  onNavigateToPricing,
+}) => {
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
   const { user, isAuthenticated } = useAuth();
   const { canUploadMore } = useSubscription();
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
   // Function to get summary size description
-  const getSummarySizeDescription = (size) => {
+  const getSummarySizeDescription = size => {
     const descriptions = {
-      'short': '1 paragraph with key points',
-      'medium': '3 paragraphs with detailed coverage',
-      'long': '5+ paragraphs with comprehensive analysis'
+      short: '1 paragraph with key points',
+      medium: '3 paragraphs with detailed coverage',
+      long: '5+ paragraphs with comprehensive analysis',
     };
     return descriptions[size] || '3 paragraphs with detailed coverage';
   };
 
-  const onDrop = useCallback(async (acceptedFiles) => {
-    if (acceptedFiles.length === 0) return;
+  const onDrop = useCallback(
+    async acceptedFiles => {
+      if (acceptedFiles.length === 0) return;
 
-    const file = acceptedFiles[0];
-    
-    // Debug logging
+      const file = acceptedFiles[0];
 
-    
-    // Check if user can upload more documents (only for authenticated users)
-    if (isAuthenticated && !canUploadMore()) {
-      console.log('DocumentUpload - User has exceeded limit, showing upgrade prompt');
-      setShowUpgradePrompt(true);
-      return;
-    }
-    
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      onProcessingError({ message: 'File size must be less than 5MB' });
-      return;
-    }
-
-    // Validate file type
-    const allowedTypes = ['.pdf', '.txt', '.docx', '.rtf', '.odt'];
-    const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-    
-    if (!allowedTypes.includes(fileExtension)) {
-      onProcessingError({ 
-        message: 'Invalid file type. Please upload PDF, TXT, DOCX, RTF, or ODT files.' 
-      });
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('document', file);
-      formData.append('summarySize', summarySize);
-
-      // Use different endpoints based on authentication status
-      const endpoint = isAuthenticated ? '/api/process-document' : '/api/process-document-guest';
-      
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        timeout: 120000, // 2 minutes timeout
-      };
-
-      // Add authorization header for authenticated users
-      if (isAuthenticated) {
-        config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+      // Debug logging
+      // Check if user can upload more documents (only for authenticated users)
+      if (isAuthenticated && !canUploadMore()) {
+        console.log(
+          'DocumentUpload - User has exceeded limit, showing upgrade prompt',
+        );
+        setShowUpgradePrompt(true);
+        return;
       }
 
-      const response = await axios.post(`${API_BASE_URL}${endpoint}`, formData, config);
-
-      if (response.data.success) {
-        onDocumentProcessed(response.data);
-      } else {
-        onProcessingError({ message: 'Failed to process document' });
+      // Validate file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        onProcessingError({ message: 'File size must be less than 5MB' });
+        return;
       }
-    } catch (error) {
-      console.error('Upload error:', error);
-      
-      let errorMessage = 'Error processing document';
-      
-      if (error.response) {
-        // Server responded with error
-        const responseData = error.response.data;
-        errorMessage = responseData.error || errorMessage;
-        
-        // Handle limit exceeded errors
-        if (responseData.reason === 'document_limit' || responseData.reason === 'page_limit') {
-          setShowUpgradePrompt(true);
-          return; // Don't show error toast, show upgrade prompt instead
+
+      // Validate file type
+      const allowedTypes = ['.pdf', '.txt', '.docx', '.rtf', '.odt'];
+      const fileExtension = file.name
+        .toLowerCase()
+        .substring(file.name.lastIndexOf('.'));
+
+      if (!allowedTypes.includes(fileExtension)) {
+        onProcessingError({
+          message:
+            'Invalid file type. Please upload PDF, TXT, DOCX, RTF, or ODT files.',
+        });
+        return;
+      }
+
+      setIsProcessing(true);
+
+      try {
+        const formData = new FormData();
+        formData.append('document', file);
+        formData.append('summarySize', summarySize);
+
+        // Use different endpoints based on authentication status
+        const endpoint = isAuthenticated
+          ? '/api/process-document'
+          : '/api/process-document-guest';
+
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          timeout: 120000, // 2 minutes timeout
+        };
+
+        // Add authorization header for authenticated users
+        if (isAuthenticated) {
+          config.headers['Authorization'] =
+            `Bearer ${localStorage.getItem('token')}`;
         }
-        
-        if (responseData.details) {
-          errorMessage += `: ${responseData.details}`;
-        }
-      } else if (error.request) {
-        // Network error
-        errorMessage = 'Network error. Please check your connection.';
-      } else {
-        // Other error
-        errorMessage = error.message || errorMessage;
-      }
-      
-      onProcessingError({ message: errorMessage });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [onDocumentProcessed, onProcessingError, setIsProcessing, API_BASE_URL, summarySize, canUploadMore, isAuthenticated]);
 
-  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
-    onDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      'text/plain': ['.txt'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/rtf': ['.rtf'],
-      'application/vnd.oasis.opendocument.text': ['.odt']
+        const response = await axios.post(
+          `${API_BASE_URL}${endpoint}`,
+          formData,
+          config,
+        );
+
+        if (response.data.success) {
+          onDocumentProcessed(response.data);
+        } else {
+          onProcessingError({ message: 'Failed to process document' });
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+
+        let errorMessage = 'Error processing document';
+
+        if (error.response) {
+          // Server responded with error
+          const responseData = error.response.data;
+          errorMessage = responseData.error || errorMessage;
+
+          // Handle limit exceeded errors
+          if (
+            responseData.reason === 'document_limit' ||
+            responseData.reason === 'page_limit'
+          ) {
+            setShowUpgradePrompt(true);
+            return; // Don't show error toast, show upgrade prompt instead
+          }
+
+          if (responseData.details) {
+            errorMessage += `: ${responseData.details}`;
+          }
+        } else if (error.request) {
+          // Network error
+          errorMessage = 'Network error. Please check your connection.';
+        } else {
+          // Other error
+          errorMessage = error.message || errorMessage;
+        }
+
+        onProcessingError({ message: errorMessage });
+      } finally {
+        setIsProcessing(false);
+      }
     },
-    multiple: false,
-    disabled: isProcessing
-  });
+    [
+      onDocumentProcessed,
+      onProcessingError,
+      setIsProcessing,
+      API_BASE_URL,
+      summarySize,
+      canUploadMore,
+      isAuthenticated,
+    ],
+  );
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject } =
+    useDropzone({
+      onDrop,
+      accept: {
+        'application/pdf': ['.pdf'],
+        'text/plain': ['.txt'],
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+          ['.docx'],
+        'application/rtf': ['.rtf'],
+        'application/vnd.oasis.opendocument.text': ['.odt'],
+      },
+      multiple: false,
+      disabled: isProcessing,
+    });
 
   return (
-    <div className="document-upload">
-      <div 
-        {...getRootProps()} 
+    <div className='document-upload'>
+      <div
+        {...getRootProps()}
         className={`dropzone ${isDragActive ? 'active' : ''} ${isDragReject ? 'reject' : ''} ${isProcessing ? 'processing' : ''}`}
       >
         <input {...getInputProps()} />
-        
+
         {isProcessing ? (
-          <div className="upload-content processing">
-            <div className="spinner"></div>
+          <div className='upload-content processing'>
+            <div className='spinner'></div>
             <p>Processing your document...</p>
-            <p className="processing-note">This may take a few moments</p>
+            <p className='processing-note'>This may take a few moments</p>
           </div>
         ) : (
-          <div className="upload-content">
+          <div className='upload-content'>
             {isDragActive ? (
               <div>
-                <i className="upload-icon">📄</i>
+                <i className='upload-icon'>📄</i>
                 <p>Drop your document here</p>
               </div>
             ) : (
               <div>
-                <i className="upload-icon">📁</i>
+                <i className='upload-icon'>📁</i>
                 <h3>Upload a Document</h3>
                 <p>Drag and drop a file here, or click to select</p>
-                <p className="file-types">
+                <p className='file-types'>
                   Supported formats: PDF, TXT, DOCX, RTF, ODT
                 </p>
-                <p className="file-size">
-                  Maximum file size: 5MB
-                </p>
-                <p className="summary-size-info">
+                <p className='file-size'>Maximum file size: 5MB</p>
+                <p className='summary-size-info'>
                   {getSummarySizeDescription(summarySize)}
                 </p>
                 {!isAuthenticated && (
-                  <p className="guest-limit">
+                  <p className='guest-limit'>
                     ⚠️ Guest users: Maximum 2 pages per document
                   </p>
                 )}
@@ -174,9 +205,9 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
           </div>
         )}
       </div>
-      
+
       <UpgradePrompt
-        type="limit"
+        type='limit'
         show={showUpgradePrompt}
         onClose={() => setShowUpgradePrompt(false)}
         onUpgrade={() => {
@@ -190,4 +221,4 @@ const DocumentUpload = ({ onDocumentProcessed, onProcessingError, isProcessing, 
   );
 };
 
-export default DocumentUpload; 
+export default DocumentUpload;

@@ -1,0 +1,274 @@
+.bulk-photos-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 20px;
+}
+
+/* Full page results view */
+.results-full-page {
+  min-height: calc(100vh - 120px); /* Account for header and padding */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.page-header p {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto 1rem;
+  line-height: 1.5;
+}
+
+.history-toggle-button {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.history-toggle-button:hover {
+  background: #f8fafc;
+  color: #374151;
+  border-color: #e2e8f0;
+}
+
+/* Error Banner */
+.error-banner {
+  background: #ffebee;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  gap: 12px;
+}
+
+.error-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.error-message {
+  flex: 1;
+  color: #c62828;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-close {
+  background: none;
+  border: none;
+  color: #c62828;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.error-close:hover {
+  background: rgba(198, 40, 40, 0.1);
+}
+
+/* Page Layout */
+.page-layout {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 200px);
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar {
+  width: 450px;
+  min-width: 350px;
+}
+
+/* Page Content */
+.page-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  flex: 1;
+  border: 1px solid #e5e7eb;
+}
+
+/* Upload Actions */
+.upload-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.process-button {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.process-button:hover {
+  background: #f8fafc;
+  color: #374151;
+  border-color: #e2e8f0;
+}
+
+.process-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 750px) {
+  .bulk-photos-page {
+    padding: 15px;
+  }
+  
+  .page-header h1 {
+    font-size: 28px;
+  }
+  
+  .page-header p {
+    font-size: 16px;
+  }
+  
+  .error-content {
+    padding: 12px 15px;
+  }
+  
+  .process-button {
+    padding: 15px 30px;
+    font-size: 16px;
+    min-width: 200px;
+  }
+
+  .page-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: auto;
+    height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 24px;
+  }
+  
+  .page-header p {
+    font-size: 14px;
+  }
+  
+  .error-content {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  
+  .error-message {
+    font-size: 13px;
+  }
+  
+  .process-button {
+    padding: 12px 24px;
+    font-size: 14px;
+    min-width: 180px;
+  }
+}
+
+/* Login Prompt */
+.login-prompt {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
+}
+
+.login-prompt-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+}
+
+.login-prompt-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.login-prompt-content p {
+  margin: 0 0 1.5rem 0;
+  color: #666;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.login-button {
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-button:hover {
+  background: #f8fafc;
+  color: #374151;
+  border-color: #e2e8f0;
+}

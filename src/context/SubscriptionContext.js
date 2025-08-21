@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useAuth } from './AuthContext';
 
 const SubscriptionContext = createContext();
@@ -6,7 +13,9 @@ const SubscriptionContext = createContext();
 export const useSubscription = () => {
   const context = useContext(SubscriptionContext);
   if (!context) {
-    throw new Error('useSubscription must be used within a SubscriptionProvider');
+    throw new Error(
+      'useSubscription must be used within a SubscriptionProvider'
+    );
   }
   return context;
 };
@@ -31,9 +40,10 @@ export const SubscriptionProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_BASE_URL =
+        process.env.REACT_APP_API_URL || 'http://localhost:5001';
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         setError('No authentication token found');
         return;
@@ -41,9 +51,9 @@ export const SubscriptionProvider = ({ children }) => {
 
       const response = await fetch(`${API_BASE_URL}/billing/subscription`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.ok) {
@@ -57,7 +67,11 @@ export const SubscriptionProvider = ({ children }) => {
         setError('Authentication required');
       } else {
         const errorText = await response.text();
-        console.error('Failed to fetch subscription data:', response.status, errorText);
+        console.error(
+          'Failed to fetch subscription data:',
+          response.status,
+          errorText
+        );
         setError('Failed to load subscription data');
       }
     } catch (err) {
@@ -69,23 +83,27 @@ export const SubscriptionProvider = ({ children }) => {
   }, [isAuthenticated, user]);
 
   // Create checkout session
-  const createCheckoutSession = async (priceId) => {
+  const createCheckoutSession = async priceId => {
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_BASE_URL =
+        process.env.REACT_APP_API_URL || 'http://localhost:5001';
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`${API_BASE_URL}/billing/create-checkout-session`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ priceId })
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/billing/create-checkout-session`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ priceId }),
+        }
+      );
 
       if (response.ok) {
         const { url } = await response.json();
@@ -104,20 +122,24 @@ export const SubscriptionProvider = ({ children }) => {
   // Cancel subscription
   const cancelSubscription = async () => {
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_BASE_URL =
+        process.env.REACT_APP_API_URL || 'http://localhost:5001';
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`${API_BASE_URL}/billing/cancel-subscription`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${API_BASE_URL}/billing/cancel-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       if (response.ok) {
         await fetchSubscriptionData(); // Refresh data
@@ -136,20 +158,24 @@ export const SubscriptionProvider = ({ children }) => {
   // Reactivate subscription
   const reactivateSubscription = async () => {
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+      const API_BASE_URL =
+        process.env.REACT_APP_API_URL || 'http://localhost:5001';
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`${API_BASE_URL}/billing/reactivate-subscription`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${API_BASE_URL}/billing/reactivate-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       if (response.ok) {
         await fetchSubscriptionData(); // Refresh data
@@ -166,11 +192,11 @@ export const SubscriptionProvider = ({ children }) => {
   };
 
   // Check if user can access a feature
-  const canAccessFeature = (feature) => {
+  const canAccessFeature = feature => {
     if (!subscription) return false;
 
     const plan = subscription.plan;
-    
+
     switch (feature) {
       case 'long_summary':
         return plan === 'premium' || plan === 'pro';
@@ -192,51 +218,55 @@ export const SubscriptionProvider = ({ children }) => {
     if (!subscription || !usage) {
       return false;
     }
-    
+
     const plan = subscription.plan;
-    const currentDocuments = usage.documentsThisMonth || usage.documentCount || 0;
+    const currentDocuments =
+      usage.documentsThisMonth || usage.documentCount || 0;
     const currentPages = usage.pagesThisMonth || usage.pageCount || 0;
     const limits = usage.limits || { documents: 5, pages: 100 };
-    
+
     // Check both document and page limits
     if (plan === 'pro') {
       return true; // Unlimited
     }
-    
-    const documentLimit = limits.documents === Infinity ? Infinity : limits.documents;
+
+    const documentLimit =
+      limits.documents === Infinity ? Infinity : limits.documents;
     const pageLimit = limits.pages === Infinity ? Infinity : limits.pages;
-    
+
     return currentDocuments < documentLimit && currentPages < pageLimit;
   };
 
   // Get remaining documents for current month
   const getRemainingDocuments = () => {
     if (!subscription || !usage) return 0;
-    
+
     const plan = subscription.plan;
-    const currentDocuments = usage.documentsThisMonth || usage.documentCount || 0;
+    const currentDocuments =
+      usage.documentsThisMonth || usage.documentCount || 0;
     const limits = usage.limits || { documents: 5, pages: 100 };
-    
+
     if (plan === 'pro') {
       return 'Unlimited';
     }
-    
-    const documentLimit = limits.documents === Infinity ? Infinity : limits.documents;
+
+    const documentLimit =
+      limits.documents === Infinity ? Infinity : limits.documents;
     return Math.max(0, documentLimit - currentDocuments);
   };
 
   // Get remaining pages for current month
   const getRemainingPages = () => {
     if (!subscription || !usage) return 0;
-    
+
     const plan = subscription.plan;
     const currentPages = usage.pagesThisMonth || usage.pageCount || 0;
     const limits = usage.limits || { documents: 5, pages: 100 };
-    
+
     if (plan === 'pro') {
       return 'Unlimited';
     }
-    
+
     const pageLimit = limits.pages === Infinity ? Infinity : limits.pages;
     return Math.max(0, pageLimit - currentPages);
   };
@@ -251,37 +281,40 @@ export const SubscriptionProvider = ({ children }) => {
     fetchSubscriptionData();
   }, [fetchSubscriptionData]);
 
-  const value = useMemo(() => ({
-    subscription,
-    usage,
-    loading,
-    error,
-    createCheckoutSession,
-    cancelSubscription,
-    reactivateSubscription,
-    canAccessFeature,
-    canUploadMore,
-    getRemainingDocuments,
-    getRemainingPages,
-    refreshData
-  }), [
-    subscription,
-    usage,
-    loading,
-    error,
-    createCheckoutSession,
-    cancelSubscription,
-    reactivateSubscription,
-    canAccessFeature,
-    canUploadMore,
-    getRemainingDocuments,
-    getRemainingPages,
-    refreshData
-  ]);
+  const value = useMemo(
+    () => ({
+      subscription,
+      usage,
+      loading,
+      error,
+      createCheckoutSession,
+      cancelSubscription,
+      reactivateSubscription,
+      canAccessFeature,
+      canUploadMore,
+      getRemainingDocuments,
+      getRemainingPages,
+      refreshData,
+    }),
+    [
+      subscription,
+      usage,
+      loading,
+      error,
+      createCheckoutSession,
+      cancelSubscription,
+      reactivateSubscription,
+      canAccessFeature,
+      canUploadMore,
+      getRemainingDocuments,
+      getRemainingPages,
+      refreshData,
+    ]
+  );
 
   return (
     <SubscriptionContext.Provider value={value}>
       {children}
     </SubscriptionContext.Provider>
   );
-}; 
+};

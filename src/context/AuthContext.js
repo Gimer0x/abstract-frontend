@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -23,12 +30,12 @@ export const AuthProvider = ({ children }) => {
     delete axios.defaults.headers.common['Authorization'];
   }, []);
 
-  const login = useCallback((newToken) => {
+  const login = useCallback(newToken => {
     setToken(newToken);
     localStorage.setItem('token', newToken);
   }, []);
 
-  const updateUser = useCallback((userData) => {
+  const updateUser = useCallback(userData => {
     setUser(userData);
   }, []);
 
@@ -47,7 +54,9 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           console.log('Checking auth status with token');
-          const response = await axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/auth/status`);
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL || 'http://localhost:5001'}/auth/status`,
+          );
           console.log('Auth status response:', response.data);
           setUser(response.data.user);
         } catch (error) {
@@ -72,19 +81,18 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, [token]);
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    loading,
-    login,
-    logout,
-    updateUser,
-    isAuthenticated: !!user
-  }), [user, token, loading, login, logout, updateUser]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      loading,
+      login,
+      logout,
+      updateUser,
+      isAuthenticated: !!user,
+    }),
+    [user, token, loading, login, logout, updateUser],
   );
-}; 
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

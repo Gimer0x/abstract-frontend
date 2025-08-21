@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import './UserProfile.css';
@@ -20,63 +20,70 @@ const UserProfile = ({ onNavigateToPricing }) => {
   if (!user) return null;
 
   return (
-    <div className="user-profile">
-      <div className="user-avatar" onClick={toggleDropdown}>
+    <div className='user-profile'>
+      <div className='user-avatar' onClick={toggleDropdown}>
         {user.picture ? (
-          <img 
-            src={user.picture} 
-            alt={user.name} 
-            className="avatar-image"
-            onError={(e) => {
+          <img
+            src={user.picture}
+            alt={user.name}
+            className='avatar-image'
+            onError={e => {
               console.log('Image failed to load:', user.picture);
               e.target.style.display = 'none';
               e.target.nextSibling.style.display = 'flex';
             }}
           />
         ) : null}
-        <div className="avatar-placeholder" style={{ display: user.picture ? 'none' : 'flex' }}>
-            {user.name.charAt(0).toUpperCase()}
-          </div>
-        <span className="user-name">{user.name}</span>
+        <div
+          className='avatar-placeholder'
+          style={{ display: user.picture ? 'none' : 'flex' }}
+        >
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+        <span className='user-name'>{user.name}</span>
         {subscription && (
-          <span className="plan-badge-inline">
+          <span className='plan-badge-inline'>
             {subscription.plan === 'free' && 'Free'}
             {subscription.plan === 'premium' && 'Premium'}
             {subscription.plan === 'pro' && 'Pro'}
           </span>
         )}
-        <span className="dropdown-arrow">▼</span>
+        <span className='dropdown-arrow'>▼</span>
       </div>
 
       {showDropdown && (
-        <div className="user-dropdown">
-          <div className="dropdown-header">
-            <div className="user-info">
-              <div className="user-full-name">{user.name}</div>
-              <div className="user-email">{user.email}</div>
+        <div className='user-dropdown'>
+          <div className='dropdown-header'>
+            <div className='user-info'>
+              <div className='user-full-name'>{user.name}</div>
+              <div className='user-email'>{user.email}</div>
             </div>
           </div>
-          
 
-          
-          <div className="dropdown-divider"></div>
-          <button className="dropdown-item" onClick={() => {
-            onNavigateToPricing();
-            setShowDropdown(false);
-          }}>
+          <div className='dropdown-divider'></div>
+          <button
+            className='dropdown-item'
+            onClick={() => {
+              onNavigateToPricing();
+              setShowDropdown(false);
+            }}
+          >
             Manage Subscription
           </button>
-          <button className="dropdown-item" onClick={handleLogout}>
+          <button className='dropdown-item' onClick={handleLogout}>
             Sign Out
           </button>
         </div>
       )}
 
       {showDropdown && (
-        <div className="dropdown-overlay" onClick={() => setShowDropdown(false)} />
+        <div
+          className='dropdown-overlay'
+          onClick={() => setShowDropdown(false)}
+        />
       )}
     </div>
   );
 };
 
-export default UserProfile; 
+export default UserProfile;

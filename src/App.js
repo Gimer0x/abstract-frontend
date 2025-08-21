@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
@@ -13,8 +13,9 @@ import UserProfile from './components/UserProfile';
 import DocumentHistory from './components/DocumentHistory';
 import Pricing from './components/Pricing';
 import ResetPassword from './components/ResetPassword';
+import BulkPhotos from './pages/BulkPhotos';
 
-function AppContent() {
+function AppContent () {
   const { user, loading, login } = useAuth();
   const [summaryData, setSummaryData] = useState(null);
   const [originalFilename, setOriginalFilename] = useState('');
@@ -22,7 +23,7 @@ function AppContent() {
   const [isExporting, setIsExporting] = useState(false);
   const [summarySize, setSummarySize] = useState('short');
   const [showLogin, setShowLogin] = useState(false);
-  const [currentPage, setCurrentPage] = useState('main');
+  const [currentPage, setCurrentPage] = useState('bulk-photos');
   const [tokenProcessed, setTokenProcessed] = useState(false);
 
   const handleStartOver = useCallback(() => {
@@ -32,7 +33,7 @@ function AppContent() {
     setIsExporting(false);
     setSummarySize('short');
     toast.info('Ready to process another document!');
-    
+
     // Force reload of document history if user is logged in
     if (user) {
       // Trigger a custom event to reload document history
@@ -44,7 +45,7 @@ function AppContent() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-    
+
     if (token && !user && !tokenProcessed) {
       console.log('Processing auth callback token');
       setTokenProcessed(true);
@@ -52,7 +53,9 @@ function AppContent() {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (token && user) {
-      console.log('Token exists but user is already logged in, cleaning up URL');
+      console.log(
+        'Token exists but user is already logged in, cleaning up URL'
+      );
       setTokenProcessed(true);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -60,7 +63,7 @@ function AppContent() {
 
   // Add keyboard shortcut for starting over
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = event => {
       // Check if user has processed a document and is on the main page
       if (summaryData && currentPage === 'main') {
         // Ctrl+R (Windows/Linux) or Cmd+R (Mac)
@@ -75,24 +78,27 @@ function AppContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [summaryData, currentPage, handleStartOver]);
 
-  const handleDocumentProcessed = useCallback((data) => {
-    setSummaryData(data.summary);
-    setOriginalFilename(data.originalFilename);
-    
-    if (data.requiresAuth) {
-      toast.warning('Sign in to access medium and long summaries!');
-    } else {
-      toast.success('Document processed successfully!');
-      
-      // Automatically reload document history for authenticated users
-      if (user) {
-        // Trigger a custom event to reload document history
-        window.dispatchEvent(new CustomEvent('reloadDocumentHistory'));
-      }
-    }
-  }, [user]);
+  const handleDocumentProcessed = useCallback(
+    data => {
+      setSummaryData(data.summary);
+      setOriginalFilename(data.originalFilename);
 
-  const handleProcessingError = useCallback((error) => {
+      if (data.requiresAuth) {
+        toast.warning('Sign in to access medium and long summaries!');
+      } else {
+        toast.success('Document processed successfully!');
+
+        // Automatically reload document history for authenticated users
+        if (user) {
+          // Trigger a custom event to reload document history
+          window.dispatchEvent(new CustomEvent('reloadDocumentHistory'));
+        }
+      }
+    },
+    [user]
+  );
+
+  const handleProcessingError = useCallback(error => {
     toast.error(error.message || 'Error processing document');
     setIsProcessing(false);
   }, []);
@@ -106,18 +112,16 @@ function AppContent() {
     toast.success('Export completed successfully!');
   }, []);
 
-  const handleExportError = useCallback((error) => {
+  const handleExportError = useCallback(error => {
     setIsExporting(false);
     toast.error(error.message || 'Error exporting document');
   }, []);
 
-
-
   if (loading) {
     return (
-      <div className="App">
-        <div className="loading-screen">
-          <div className="loading-spinner"></div>
+      <div className='App'>
+        <div className='loading-screen'>
+          <div className='loading-spinner'></div>
           <p>Loading...</p>
         </div>
       </div>
@@ -126,29 +130,37 @@ function AppContent() {
 
   if (showLogin && !user) {
     return (
-      <div className="App">
+      <div className='App'>
         <AuthForm onLogin={login} onClose={() => setShowLogin(false)} />
       </div>
     );
   }
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div className="header-content">
-          <div className="header-left">
+    <div className='App'>
+      <header className='App-header'>
+        <div className='header-content'>
+          <div className='header-left'>
             <h1>Document Summarizer</h1>
-            <p>Upload a document to get an AI-powered summary and key insights</p>
+            <p>
+              Upload a document to get an AI-powered summary and key insights
+            </p>
           </div>
-          <div className="header-right">
-            <nav className="header-nav">
-              <button 
-                className={`nav-btn ${currentPage === 'main' ? 'active' : ''}`}
-                onClick={() => setCurrentPage('main')}
+          <div className='header-right'>
+            <nav className='header-nav'>
+              <button
+                className={`nav-btn ${currentPage === 'bulk-photos' ? 'active' : ''}`}
+                onClick={() => setCurrentPage('bulk-photos')}
               >
                 Home
               </button>
-              <button 
+              <button
+                className={`nav-btn ${currentPage === 'main' ? 'active' : ''}`}
+                onClick={() => setCurrentPage('main')}
+              >
+                Document Summarizer
+              </button>
+              <button
                 className={`nav-btn ${currentPage === 'pricing' ? 'active' : ''}`}
                 onClick={() => setCurrentPage('pricing')}
               >
@@ -156,70 +168,74 @@ function AppContent() {
               </button>
             </nav>
             {user ? (
-              <UserProfile onNavigateToPricing={() => setCurrentPage('pricing')} />
+              <UserProfile
+                onNavigateToPricing={() => setCurrentPage('pricing')}
+              />
             ) : (
-              <div className="auth-buttons">
-                <button 
-                  className="sign-in-btn"
+              <div className='auth-buttons'>
+                <button
+                  className='sign-in-btn'
                   onClick={() => setShowLogin(true)}
                 >
                   Sign In
                 </button>
               </div>
             )}
-            
-
           </div>
         </div>
       </header>
 
-      <main className="App-main">
-        {currentPage === 'main' ? (
-          <div className="main-content">
-            <div className="upload-section">
-              <SummarySizeSelector
-                selectedSize={summarySize}
-                onSizeChange={setSummarySize}
-                isProcessing={isProcessing}
-                isAuthenticated={!!user}
-                onNavigateToPricing={() => setCurrentPage('pricing')}
-              />
-              
-              <DocumentUpload
-                onDocumentProcessed={handleDocumentProcessed}
-                onProcessingError={handleProcessingError}
-                isProcessing={isProcessing}
-                setIsProcessing={setIsProcessing}
-                summarySize={summarySize}
-                isAuthenticated={!!user}
-                onNavigateToPricing={() => setCurrentPage('pricing')}
-              />
+      <main className='App-main'>
+        {currentPage === 'bulk-photos' ? (
+          <BulkPhotos />
+        ) : currentPage === 'main' ? (
+          <div className='page-layout'>
+            <div className='main-content'>
+              <div className='page-content'>
+                <SummarySizeSelector
+                  selectedSize={summarySize}
+                  onSizeChange={setSummarySize}
+                  isProcessing={isProcessing}
+                  isAuthenticated={!!user}
+                  onNavigateToPricing={() => setCurrentPage('pricing')}
+                />
 
-              {summaryData && (
-                <>
-                  <SummaryDisplay 
-                    summaryData={summaryData} 
-                    originalFilename={originalFilename}
-                    summarySize={summarySize}
-                    onStartOver={handleStartOver}
-                  />
-                  
-                  <ExportOptions
-                    summaryData={summaryData}
-                    originalFilename={originalFilename}
-                    summarySize={summarySize}
-                    onExportStart={handleExportStart}
-                    onExportComplete={handleExportComplete}
-                    onExportError={handleExportError}
-                    isExporting={isExporting}
-                    isGuest={!user}
-                  />
-                </>
-              )}
+                <DocumentUpload
+                  onDocumentProcessed={handleDocumentProcessed}
+                  onProcessingError={handleProcessingError}
+                  isProcessing={isProcessing}
+                  setIsProcessing={setIsProcessing}
+                  summarySize={summarySize}
+                  isAuthenticated={!!user}
+                  onNavigateToPricing={() => setCurrentPage('pricing')}
+                />
+
+                {summaryData && (
+                  <>
+                    <SummaryDisplay
+                      summaryData={summaryData}
+                      originalFilename={originalFilename}
+                      summarySize={summarySize}
+                      onStartOver={handleStartOver}
+                    />
+
+                    <ExportOptions
+                      summaryData={summaryData}
+                      originalFilename={originalFilename}
+                      summarySize={summarySize}
+                      onExportStart={handleExportStart}
+                      onExportComplete={handleExportComplete}
+                      onExportError={handleExportError}
+                      isExporting={isExporting}
+                      isGuest={!user}
+                    />
+                  </>
+                )}
+              </div>
             </div>
 
             {user && (
-              <div className="history-section">
+              <div className='sidebar'>
                 <DocumentHistory />
               </div>
             )}
@@ -230,7 +246,7 @@ function AppContent() {
       </main>
 
       <ToastContainer
-        position="top-right"
+        position='top-right'
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -244,13 +260,13 @@ function AppContent() {
   );
 }
 
-function App() {
+function App () {
   const [currentRoute, setCurrentRoute] = useState('main');
 
   useEffect(() => {
     const checkRoute = () => {
       const path = window.location.pathname;
-      
+
       if (path === '/reset-password') {
         setCurrentRoute('reset-password');
       } else {
@@ -259,13 +275,13 @@ function App() {
     };
 
     checkRoute();
-    
+
     // Listen for popstate events (back/forward navigation)
     window.addEventListener('popstate', checkRoute);
-    
+
     // Also listen for hashchange in case the URL changes
     window.addEventListener('hashchange', checkRoute);
-    
+
     return () => {
       window.removeEventListener('popstate', checkRoute);
       window.removeEventListener('hashchange', checkRoute);
